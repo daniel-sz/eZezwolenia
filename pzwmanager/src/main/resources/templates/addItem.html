@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap.min.css}"/>
+    <script th:src="@{/js/bootstrap.min.js}"></script>
+    <meta charset="UTF-8">
+    <title>Add new Item</title>
+</head>
+<body>
+<main>
+    <div class="jumbotron jumbotron-fluid">
+        <div class="container">
+            <h3 class="text-center">Dodaj pozycję w bazie</h3>
+        </div>
+    </div>
+    <div class="container container-fluid border-left border-right">
+        <form class="col-12 text-center" method="post" th:action="@{/addItem}" th:object="${item}">
+            <div class="form-group col-12">
+                <label for="item_name">Nazwa</label>
+                <input class="form-control" type="text" name="item_name" id="item_name" th:field="*{name}">
+            </div>
+            <div class="form-group col-12">
+                <label for="item_description">Krótki opis</label>
+                <input class="form-control" type="text" name="item_description" id="item_description" th:field="*{description}">
+            </div>
+            <div class="form-group col-12">
+                <label for="item_price">Koszt</label>
+                <input class="form-control" type="number" name="item_price" id="item_price" th:field="*{price}">
+            </div>
+            <button type="submit" class="btn btn-primary">Dodaj pozycję</button>
+            <div class="col-12">
+                <span class="text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></span>
+                <span class="text-success" th:text="${successMessage}"></span>
+            </div>
+        </form>
+    </div>
+</main>
+</body>
+</html>

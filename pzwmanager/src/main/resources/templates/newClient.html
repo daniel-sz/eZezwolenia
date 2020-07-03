@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Dodaj użytkownika</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap.min.css}"/>
+    <script th:src="@{/js/bootstrap.min.js}"></script>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/forms.css}">
+</head>
+<body>
+<main>
+    <div class="jumbotron jumbotron-fluid">
+        <div class="container">
+            <h3 class=" text-center">Dodaj użytkownika</h3>
+        </div>
+    </div>
+    <div class="container container-fluid">
+        <form class="col-sm-12 col-md-12 col-lg-12 text-center" method="post" th:action="@{/dodaj}" th:object="${user}">
+            <div class="form-group">
+                <div class="col-md-12">
+                    <label for="first_name">Imię</label>
+                    <input class="form-control" type="text" name="first_name" id="first_name" th:field="*{firstName}"><br>
+                </div>
+                <div class="col-md-12">
+                    <label for="last_name">Nazwisko</label>
+                    <input class="form-control" type="text" name="last_name" id="last_name" th:field="*{lastName}"><br>
+                </div>
+                <div class="col-md-12">
+                    <label for="card_id">Numer karty wędkarskiej</label>
+                    <input class="form-control" type="text" name="card_id" id="card_id" th:field="*{cardId}"><br>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <button type="submit" name="btn_add" class="btn btn-primary">Dodaj</button>
+                </div>
+                <div class="col-md-12">
+                    <span class="text-danger" th:if="${#fields.hasErrors('cardId')}" th:errors="*{cardId}"></span>
+                    <span class="text-success" th:text="${successMessage}"></span>
+                </div>
+            </div>
+        </form>
+
+    </div>
+</main>
+
+</body>
+</html>
