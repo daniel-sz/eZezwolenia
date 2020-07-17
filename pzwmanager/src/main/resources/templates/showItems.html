@@ -22,18 +22,26 @@
                 <th class="text-center" th:text="#{admin.items.id}"></th>
                 <th class="text-center" th:text="#{admin.items.name}"></th>
                 <th class="text-center" th:text="#{admin.items.desc}"></th>
-                <th class="text-center" th:text="#{admin.items.price}"></th>
+                <th class="text-center" th:text="#{admin.items.price1}"></th>
+                <th class="text-center" th:text="#{admin.items.price3}"></th>
+                <th class="text-center" th:text="#{admin.items.price7}"></th>
+                <th class="text-center" th:text="#{admin.items.price365}"></th>
+                <th class="text-center" th:text="#{admin.items.category}"></th>
             </tr>
             </thead>
             <tbody>
             <tr th:if="${items.empty}">
-                <td colspan="4" class="text-center" th:text="#{admin.items.empty}"></td>
+                <td colspan="8" class="text-center" th:text="#{admin.items.empty}"></td>
             </tr>
             <tr th:each="item : ${items}">
                 <td class="text-center"><span th:text="${item.id}"></span></td>
                 <td class="text-center"><span th:text="${item.name}"></span></td>
                 <td class="text-center"><span th:text="${item.description}"></span></td>
-                <td class="text-center"><span th:text="${item.price}"></span></td>
+                <td class="text-center"><span th:text="${item.price1day}"></span></td>
+                <td class="text-center"><span th:text="${item.price3days}"></span></td>
+                <td class="text-center"><span th:text="${item.price7days}"></span></td>
+                <td class="text-center"><span th:text="${item.price1year}"></span></td>
+                <td class="text-center"><span th:text="${item.itemCategory}"></span></td>
             </tr>
             </tbody>
         </table>

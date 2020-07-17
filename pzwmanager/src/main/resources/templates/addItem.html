@@ -11,10 +11,10 @@
 <main>
     <div class="jumbotron jumbotron-fluid">
         <div class="container">
-            <h3 class="text-center">Dodaj pozycję w bazie</h3>
+            <h2 class="text-center">Dodaj pozycję w bazie</h2>
         </div>
     </div>
-    <div class="container container-fluid border-left border-right">
+    <div class="container container-fluid border rounded" style="padding-top: 30px; padding-bottom: 30px">
         <form class="col-12 text-center" method="post" th:action="@{/addItem}" th:object="${item}">
             <div class="form-group col-12">
                 <label for="item_name">Nazwa</label>
@@ -22,11 +22,33 @@
             </div>
             <div class="form-group col-12">
                 <label for="item_description">Krótki opis</label>
-                <input class="form-control" type="text" name="item_description" id="item_description" th:field="*{description}">
+                <textarea class="form-control" rows="5" name="item_description" id="item_description" th:field="*{description}"></textarea>
+            </div>
+            <h4>Koszty</h4>
+            <div class="form-row">
+                <div class="form-group col-sm-3" id="item_prices">
+                    <label for="item_price1">1 dzień</label>
+                    <input class="form-control" type="number" name="item_price1" id="item_price1" th:field="*{price1day}">
+                </div>
+                <div class="form-group col-sm-3">
+                    <label for="item_price3">3 dni</label>
+                    <input class="form-control" type="number" name="item_price3" id="item_price3" th:field="*{price3days}">
+                </div>
+                <div class="form-group col-sm-3">
+                    <label for="item_price7">7 dni</label>
+                    <input class="form-control" type="number" name="item_price7" id="item_price7" th:field="*{price7days}">
+                </div>
+                <div class="form-group col-sm-3">
+                    <label for="item_price365">1 rok</label>
+                    <input class="form-control" type="number" name="item_price365" id="item_price365" th:field="*{price1year}">
+                </div>
             </div>
             <div class="form-group col-12">
-                <label for="item_price">Koszt</label>
-                <input class="form-control" type="number" name="item_price" id="item_price" th:field="*{price}">
+                <label for="item_category">Opłata skierowana do:</label>
+                <select class="form-control" name="item_category" id="item_category" th:field="*{itemCategory}">
+                    <option value="MEMBER">Członek koła</option>
+                    <option value="STANDARD_USER">Osoba spoza koła</option>
+                </select>
             </div>
             <button type="submit" class="btn btn-primary">Dodaj pozycję</button>
             <div class="col-12">

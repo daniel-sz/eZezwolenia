@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/all.css}"/>
+    <script th:src="@{/js/jquery.js}"></script>
+    <script th:src="@{/js/bootstrap.min.js}"></script>
+    <meta charset="UTF-8">
+    <title>Koszyk</title>
+</head>
+<body>
+<header class="jumbotron jumbotron-fluid text-center">
+    <h2>Koszyk</h2>
+</header>
+<!--Tu pojawi się zawartość koszyka-->
+<!--<p th:text="${cart.toString()}">ID</p>-->
+<div class="container container-lg">
+    <div class="row">
+        <div class="col-lg-8">
+            <table class="table table-hover border-bottom border-primary">
+                <thead class="thead-light">
+                <tr>
+                    <th class="text-center">Rodzaj pozwolenia </th>
+                    <th class="text-center">Cena</th>
+                    <th class="text-center">Data rozpoczęcia</th>
+                    <th class="text-center">Imię</th>
+                    <th class="text-center">Nazwisko</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:if="${cart.orderedItems.empty}">
+                    <td colspan="5" class="text-center">Koszyk jest pusty!</td>
+                </tr>
+                <tr th:each="orderedItem : ${cart.orderedItems}">
+                    <td class="text-center"><span th:text="${orderedItem.item.name}"></span></td>
+                    <td class="text-center"><span th:text="${orderedItem.price}"></span></td>
+                    <td class="text-center"><span th:text="${orderedItem.beginDate}"></span></td>
+                    <td class="text-center"><span th:text="${orderedItem.person.firstName}"></span></td>
+                    <td class="text-center"><span th:text="${orderedItem.person.lastName}"></span></td>
+                </tr>
+                </tbody>
+            </table>
+            <p class="text-right" th:text="'Razem: ' + ${cart.sumPrice} + ' zł'"></p>
+        </div>
+        <div class="col-lg-4">
+            <div class="container">
+                <h4>Dokończ zamówienie</h4>
+                <form class="text-center" method="post" th:action="@{/finalizeOrder}" th:object="${order}">
+                    <div class="form-group col-12">
+                        <label for="email">Adres e-mail</label>
+                        <input class="form-control" type="email" id="email" th:field="${order.email}">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Przejdź do płatności</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

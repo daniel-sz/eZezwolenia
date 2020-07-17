@@ -3,21 +3,39 @@
       xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/all.css}"/>
     <script th:src="@{/js/bootstrap.min.js}"></script>
-    <link rel="stylesheet" type="text/css" th:href="@{/css/main.css}">
     <meta charset="UTF-8">
     <title>Ekran główny</title>
 </head>
 <body>
-
-<div class="container">
-    <div class="spacing"/>
-        <div class="button">
-            <p>Opłata za cały rok dla członków koła</p>
+<header class="jumbotron jumbotron-fluid">
+<!--    Do zrobienia jeden fragment dla wszystkich podstron-->
+    <div class="container">
+        <h3 class="text-center">e-Zezwolenia</h3>
+    </div>
+</header>
+<div class="container container-lg">
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="card text-center" style="margin-bottom: 20px; margin-top: 20px;">
+                <div class="card-body">
+                    <h5>Dla członków koła</h5>
+                    <p>Opłata za cały rok</p>
+                    <a class="btn btn-lg btn-primary" style="color: white;" th:href="@{/productList(member=true)}">Wybierz</a>
+                </div>
+            </div>
         </div>
-        <div class="button">
-            <p>Opłata za zezwolenie na połów ryb na terenie danego okręgu</p>
+        <div class="col-lg-6">
+            <div class="card text-center" style="margin-top: 20px; margin-bottom: 20px;">
+                <div class="card-body">
+                    <h5>Dla osób spoza koła</h5>
+                    <p>Opłata za zezwolenie na połów na terenie okręgu</p>
+                    <a class="btn btn-lg btn-primary" style="color: white;" th:href="@{/productList(member=false)}">Wybierz</a>
+                </div>
+            </div>
         </div>
+    </div>
 </div>
 
 </body>

@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/all.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/tempusdominus-bootstrap-4.min.css}"/>
+    <script th:src="@{/js/jquery.js}"></script>
+    <script th:src="@{/js/bootstrap.min.js}"></script>
+    <script th:src="@{/js/moment-with-locales.min.js}"></script>
+    <script th:src="@{/js/tempusdominus-bootstrap-4.min.js}"></script>
+    <script th:src="@{/js/myScript.js}" th:inline="javascript"></script>
+    <meta charset="UTF-8">
+    <title>Lista produktów</title>
+</head>
+<body>
+<header class="jumbotron jumbotron-fluid text-center">
+    <h3>Wybierz pozwolenie</h3>
+</header>
+<main>
+    <div class="container container-lg">
+        <div class="row">
+            <div class="col-12" th:if="${items.empty}">
+                <h2 class="text-lg-center">Brak zawartości do wyświetlenia!</h2>
+            </div>
+            <div class="col-lg-6" th:each="item : ${items}">
+                <div class="card text-center" style="margin-top: 20px; margin-bottom: 20px;">
+                    <div class="card-body">
+                        <h5 th:text="${item.name}"></h5>
+                        <p th:text="${item.description}"></p>
+                    </div>
+                    <div class="card-footer">
+                        <p th:text="'Od ' + ${item.price1day} + ' zł'"></p>
+                        <a th:href="@{getOne(id=${item.id})}" id="openModalBtn"
+                           class="btn btn-lg btn-primary" style="color: white;" th:attr="data-target='#myOrderModal'">
+                            <i class="fas fa-cart-plus"></i> Dodaj
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="modal fade" id="myOrderModal">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="orderModalLabel" th:text="Dodaj"></h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <form class="col-12 text-center" method="post" th:action="@{/addToCart}" th:object="${orderItem}">
+                                <div class="col-12 border-bottom border-primary">
+                                    <h4 class="mt-2">Dane osobowe</h4>
+                                </div>
+                                <div class="mt-2 form-row">
+                                    <div class="form-group col-md-6">
+                                        <label for="firstName">Imię</label>
+                                        <input class="form-control" type="text" name="firstName" id="firstName" th:field="${orderItem.person.firstName}" required>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label for="lastName">Nazwisko</label>
+                                        <input class="form-control" type="text" name="lastName" id="lastName" th:field="${orderItem.person.lastName}" required>
+                                    </div>
+                                </div>
+<!--                                <div class="form-row">-->
+<!--                                    <div class="form-group col-md-6">-->
+<!--                                        <label for="email">E-mail</label>-->
+<!--                                        <input class="form-control" type="email" name="email" id="email" th:field="${orderItem.person.email}" required>-->
+<!--                                    </div>-->
+<!--                                    <div class="form-group col-md-6">-->
+<!--                                        <label for="emailConfirm">Potwierdź e-mail</label>-->
+<!--                                        <input class="form-control" type="email" name="emailConfirm" id="emailConfirm"-->
+<!--                                               onfocus="validateMail(document.getElementById('email'), this)"-->
+<!--                                               oninput="validateMail(document.getElementById('email'), this)">-->
+<!--                                    </div>-->
+<!--                                    <div class="col-12">-->
+<!--                                        <p class="text-center"></p>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+                                <div class="form-row">
+                                    <div class="form-group col-md-6">
+                                        <label for="nationality">Obywatelstwo</label>
+                                        <select class="form-control" name="nationality" id="nationality">
+                                            <option value="0">Polskie</option>
+                                            <option value="1">Zagraniczne</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label for="cardNumber">Nr karty wędkarskiej</label>
+                                        <input class="form-control" type="text" name="cardNumber" id="cardNumber" th:field="${orderItem.person.cardNumber}">
+                                    </div>
+                                </div>
+                                <div class="col-12 border-bottom border-primary">
+                                    <h4 class="mt-2">Zezwolenie</h4>
+                                </div>
+                                <div class="mt-2 form-row">
+                                    <div class="form-group col-md-6">
+                                        <label for="clubArea">Okręg PZW</label>
+                                        <select class="form-control" name="clubArea" id="clubArea">
+                                            <option>PZW Białystok</option>
+                                            <option>PZW Biała Podlaska</option>
+                                            <option>PZW Bielsko-Biała</option>
+                                            <option>PZW Bydgoszcz</option>
+                                            <option>PZW Chełm</option>
+                                            <option>PZW Ciechanów</option>
+                                            <option>PZW Częstochowa</option>
+                                            <option>PZW Elbląg</option>
+                                            <option>PZW Gdańsk</option>
+                                            <option>PZW Gorzów Wlkp.</option>
+                                            <option>PZW Jelenia Góra</option>
+                                            <option>PZW Kalisz</option>
+                                            <option>PZW Katowice</option>
+                                            <option>PZW Kielce</option>
+                                            <option>PZW Konin</option>
+                                            <option>PZW Koszalin</option>
+                                            <option>PZW Kraków</option>
+                                            <option>PZW Krosno</option>
+                                            <option>PZW Legnica</option>
+                                            <option>PZW Leszno</option>
+                                            <option>PZW Lublin</option>
+                                            <option>PZW Łódź</option>
+                                            <option>Okręg Mazowiecki PZW</option>
+                                            <option>Okręg Nadnotecki PZW w Pile</option>
+                                            <option>PZW Nowy Sącz</option>
+                                            <option>PZW Olsztyn</option>
+                                            <option>PZW Opole</option>
+                                            <option>PZW Piotrków Trybunalski</option>
+                                            <option>PZW Poznań</option>
+                                            <option>PZW Przemyśl</option>
+                                            <option>PZW Włocławek</option>
+                                            <option>PZW Radom</option>
+                                            <option>PZW Rzeszów</option>
+                                            <option>PZW Siedlce</option>
+                                            <option>PZW Sieradz</option>
+                                            <option>PZW Skierniewice</option>
+                                            <option>PZW Słupsk</option>
+                                            <option>PZW Szczecin</option>
+                                            <option>PZW Tarnobrzeg</option>
+                                            <option>PZW Tarnów</option>
+                                            <option>PZW Toruń</option>
+                                            <option selected="selected">PZW Wałbrzych</option>
+                                            <option>PZW Wrocław</option>
+                                            <option>PZW Zamość</option>
+                                            <option>PZW Zielona Góra</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label for="clubCity">Koło PZW</label>
+                                        <input class="form-control" type="text" id="clubCity" th:field="${orderItem.person.clubName}">
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group col-12">
+                                        <label for="permissionPeriod">Zezwolenie na okres</label><br>
+                                        <div class="btn-group btn-group-lg" id="permissionPeriod">
+                                            <button type="button" class="btn btn-primary" id="btn1day"
+                                                    onclick="updatePrice(this.id)">1 dzień</button>
+                                            <button type="button" class="btn btn-primary" id="btn3days"
+                                                    onclick="updatePrice(this.id)">3 dni</button>
+                                            <button type="button" class="btn btn-primary" id="btn7days"
+                                                    onclick="updatePrice(this.id)">7 dni</button>
+                                            <button type="button" class="btn btn-primary" id="btn1year"
+                                                    onclick="updatePrice(this.id)">1 rok</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group col-12">
+                                        <label>Początek obowiązywania pozwolenia</label><br>
+                                        <div class="input-group date" id="datepicker" data-target-input="nearest">
+                                            <input class="form-control datetimepicker-input" data-target="#datepicker" type="text" th:field="${orderItem.beginDate}">
+                                            <div class="input-group-append" data-target="#datepicker" data-toggle="datetimepicker">
+                                                <div class="input-group-text">
+                                                    <i class="fas fa-calendar-day"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <script type="text/javascript">
+                                        $(function () {
+                                            $('#datepicker').datetimepicker({
+                                                locale: 'pl',
+                                                format: 'YYYY-MM-DD'
+                                            })
+                                        })
+                                    </script>
+                                </div>
+                                <div class="form-row">
+                                    <div class="col-12">
+                                        <input id="itemId" th:field="${orderItem.item.id}" hidden="hidden">
+                                        <input id="itemPrice" th:field="${orderItem.price}" hidden="hidden">
+                                        <button type="submit" class="btn btn-lg btn-primary">Dodaj do koszyka</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="modal-footer" id="priceTextBox">
+                        <p>Cena: </p><p id="priceTag">0</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</main>
+
+</body>
+</html>

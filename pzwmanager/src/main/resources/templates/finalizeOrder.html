@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/all.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/tempusdominus-bootstrap-4.min.css}"/>
+    <script th:src="@{/js/jquery.js}"></script>
+    <script th:src="@{/js/bootstrap.min.js}"></script>
+    <script th:src="@{/js/moment-with-locales.min.js}"></script>
+    <script th:src="@{/js/tempusdominus-bootstrap-4.min.js}"></script>
+    <script th:src="@{/js/myScript.js}" th:inline="javascript"></script>
+    <meta charset="UTF-8">
+    <title>Finalizacja zamówienia</title>
+</head>
+<body>
+<h3 class="text-center">Proszę czekać, za chwilę wyskoczy okienko PayU do wykonania przelewu.</h3>
+<div class="container container-lg">
+    <table class="table table-hover">
+        <thead class="thead-light">
+            <tr>
+                <th class="text-center">Dane do zamówienia:</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td th:text="'ID: ' + ${orderDetails.id}"></td>
+            </tr>
+            <tr>
+                <td th:text="'Nr zamówienia: ' + ${orderDetails.order_number}"></td>
+            </tr>
+            <tr>
+                <td th:text="'Data: ' + ${orderDetails.date}"></td>
+            </tr>
+            <tr>
+                <td th:text="'E-mail: ' + ${orderDetails.email}"></td>
+            </tr>
+            <tr>
+                <td th:text="'Wartość: ' + ${orderDetails.value}"></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
