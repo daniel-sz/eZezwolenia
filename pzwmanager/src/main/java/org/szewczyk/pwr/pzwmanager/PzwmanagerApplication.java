@@ -8,7 +8,6 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerA
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 
 @SpringBootApplication
-
 public class PzwmanagerApplication {
 
 	public static void main(String[] args) {

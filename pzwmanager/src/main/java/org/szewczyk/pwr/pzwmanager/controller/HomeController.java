@@ -14,10 +14,8 @@ import org.szewczyk.pwr.pzwmanager.service.PersonService;
 import javax.annotation.Resource;
 import javax.validation.Valid;
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Objects;
 
 @Controller
 public class HomeController {
@@ -94,40 +92,9 @@ public class HomeController {
 //        return modelAndView;
 //    }
 
-    @GetMapping(value = "addItem")
-    public ModelAndView addItemGet(){
-        ModelAndView modelAndView = new ModelAndView();
-        Item item = new Item();
-        modelAndView.addObject("item", item);
-        modelAndView.setViewName("addItem");
-        return modelAndView;
-    }
 
-    @PostMapping(value = "addItem")
-    public ModelAndView addItemPost(@Valid Item item, BindingResult bindingResult){
-        ModelAndView modelAndView = new ModelAndView();
-        Item itemExists = itemService.findByName(item.getName());
-        if (itemExists != null){
-            bindingResult.rejectValue("name", "error.item", "Istnieje już pozycja o takiej nazwie");
-        }
-        if (bindingResult.hasErrors()){
-            modelAndView.setViewName("addItem");
-        } else {
-            itemService.saveItem(item);
-            modelAndView.addObject("successMessage", "Pomyślnie dodano do bazy");
-            modelAndView.addObject("item", new Item());
-            modelAndView.setViewName("addItem");
-        }
-        return modelAndView;
-    }
 
-    @GetMapping(value = "showItems")
-    public ModelAndView showItemsList(){
-        ModelAndView modelAndView = new ModelAndView();
-        modelAndView.addObject("items", itemService.findAll());
-        modelAndView.setViewName("showItems");
-        return modelAndView;
-    }
+
 
     @GetMapping(value = "productList")
     public ModelAndView showProductList(@RequestParam(value = "member") final boolean member){
@@ -170,7 +137,7 @@ public class HomeController {
             modelAndView.addObject("cart", newCart);
         }
         Order newOrder = new Order();
-        newOrder.setDate(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME));
+        newOrder.setDate(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE));
         modelAndView.addObject("order", newOrder);
 
         modelAndView.setViewName("cart");
@@ -184,7 +151,7 @@ public class HomeController {
         Cart cart = cartService.findBySessionId(currentSessionId);
         Order placedOrder = new Order();
 
-        order.setDate(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME));
+        order.setDate(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE));
         order.setOrderNumber();
         order.getOrderItems().addAll(cart.getOrderedItems());
         cart.getOrderedItems().clear();
@@ -192,7 +159,7 @@ public class HomeController {
         order.setValue(cart.getSumPrice());
         orderService.saveOrder(order);
 
-        System.out.println("Zamówienie nr: " + order.getOrder_number() + " o wartości: " + order.getValue()
+        System.out.println("----> Zamówienie nr: " + order.getOrder_number() + " o wartości: " + order.getValue()
                 + " na adres: " + order.getEmail());
         modelAndView.addObject("orderDetails", order);
         modelAndView.setViewName("finalizeOrder");

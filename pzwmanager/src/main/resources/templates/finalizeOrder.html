@@ -4,17 +4,15 @@
 <head>
     <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap.min.css}"/>
     <link rel="stylesheet" type="text/css" th:href="@{/css/all.css}"/>
-    <link rel="stylesheet" type="text/css" th:href="@{/css/tempusdominus-bootstrap-4.min.css}"/>
     <script th:src="@{/js/jquery.js}"></script>
     <script th:src="@{/js/bootstrap.min.js}"></script>
-    <script th:src="@{/js/moment-with-locales.min.js}"></script>
-    <script th:src="@{/js/tempusdominus-bootstrap-4.min.js}"></script>
-    <script th:src="@{/js/myScript.js}" th:inline="javascript"></script>
     <meta charset="UTF-8">
     <title>Finalizacja zamówienia</title>
 </head>
 <body>
-<h3 class="text-center">Proszę czekać, za chwilę wyskoczy okienko PayU do wykonania przelewu.</h3>
+<div class="jumbotron jumbotron-fluid">
+    <h3 class="text-center">Proszę czekać, za chwilę wyskoczy okienko PayU do wykonania przelewu.</h3>
+</div>
 <div class="container container-lg">
     <table class="table table-hover">
         <thead class="thead-light">
@@ -36,7 +34,7 @@
                 <td th:text="'E-mail: ' + ${orderDetails.email}"></td>
             </tr>
             <tr>
-                <td th:text="'Wartość: ' + ${orderDetails.value}"></td>
+                <td th:text="'Wartość: ' + ${orderDetails.value} + ' zł'"></td>
             </tr>
         </tbody>
     </table>

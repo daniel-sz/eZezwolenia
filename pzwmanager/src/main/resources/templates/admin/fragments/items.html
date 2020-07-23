@@ -1,0 +1,65 @@
+<div class="container" xmlns:th="http://www.thymeleaf.org">
+    <div class="row">
+        <div class="my-2">
+            <form th:action="@{/admin/addItem}">
+                <button type="submit" class="btn btn-outline-success"><span class="fas fa-plus"></span> Dodaj pozwolenie</button>
+            </form>
+        </div>
+    </div>
+    <div class="row">
+        <div class="itemsTableWrapper">
+            <table id="itemsTable" class="table table-hover table-responsive" style="font-size: 0.85rem;">
+                <thead class="thead-light">
+                <tr class="text-center">
+                    <th colspan="4"></th>
+                    <th class="border-right border-left" colspan="4">Koszt</th>
+                    <th></th>
+                </tr>
+                <tr class="text-center">
+                    <th>ID</th>
+                    <th>Nazwa</th>
+                    <th>Opis</th>
+                    <th>Kategoria</th>
+                    <th class="border-left">1 dzień</th>
+                    <th>3 dni</th>
+                    <th>7 dni</th>
+                    <th class="border-right">1 rok</th>
+                    <th>Usuń</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:if="${items.empty}">
+                    <td colspan="9" class="text-center">Lista jest pusta!</td>
+                </tr>
+                <tr th:each="item : ${items}">
+                    <td class="text-center" th:text="${item.id}"></td>
+                    <td class="text-center" th:text="${item.name}"></td>
+                    <td class="text-center" th:text="${item.description}"></td>
+                    <td class="text-center" th:text="${item.itemCategory}"></td>
+                    <td class="text-center" th:text="${item.price1day}"></td>
+                    <td class="text-center" th:text="${item.price3days}"></td>
+                    <td class="text-center" th:text="${item.price7days}"></td>
+                    <td class="text-center" th:text="${item.price1year}"></td>
+                    <td class="text-center">
+                        <a th:attr="data-item-id=${item.id}" data-confirm="Czy na pewno usunąć?" class="fas fa-trash text-danger"></a>
+                    </td>
+                </tr>
+                </tbody>
+                <tfoot>
+                <tr class="text-center">
+                    <th>ID</th>
+                    <th>Nazwa</th>
+                    <th>Opis</th>
+                    <th>Kategoria</th>
+                    <th class="border-left">1 dzień</th>
+                    <th>3 dni</th>
+                    <th>7 dni</th>
+                    <th class="border-right">1 rok</th>
+                    <th>Usuń</th>
+                </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+
+</div>

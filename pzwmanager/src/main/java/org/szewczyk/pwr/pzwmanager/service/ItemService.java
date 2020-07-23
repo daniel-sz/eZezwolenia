@@ -28,4 +28,5 @@ public class ItemService {
         itemRepository.save(item);
         return item;
     }
+    public void remove(long id){ itemRepository.deleteById(id); }
 }

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/mdb.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/all.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/adminPageTable.css}"/>
+    <script th:src="@{/js/jquery.js}"></script>
+    <script th:src="@{/js/mdb.js}"></script>
+    <script th:src="@{/js/bootstrap.min.js}"></script>
+    <script th:src="@{/js/adminScripts.js}"></script>
+    <meta charset="UTF-8">
+    <title>Admin panel</title>
+</head>
+<body>
+<header>
+    <div class="jumbotron jumbotron-fluid bg-primary text-light">
+        <h3 class="text-center">Panel administratora</h3>
+    </div>
+</header>
+<main>
+    <div class="container container-lg">
+        <div class="row">
+            <div class="col-lg-3">
+                <div class="d-flex flex-row-reverse">
+                    <div class="col-12 mb-2">
+                        <a class="btn btn-outline-secondary" th:text="'Zezwolenia:   ' + ${items.size()}" style="width: 90%;">Lista zezwoleń</a>
+                    </div>
+                </div>
+                <div class="d-flex flex-row-reverse">
+                    <div class="col-12 mb-2">
+                        <a class="btn btn-outline-secondary" th:text="'Zamówienia:   ' + ${orders.size()}" style="width: 90%;">Historia płatności</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-9 bg-light border rounded border-secondary">
+                <div class="container container-fluid">
+                    <div th:insert="admin/fragments/items.html"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</main>
+</body>
+</html>
