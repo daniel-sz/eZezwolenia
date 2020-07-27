@@ -33,15 +33,11 @@ $(document).ready(function () {
 })
 
 $(document).ready(function () {
-    $('#itemsTable').DataTable({
+    console.log($('#itemsTable'))
+    $('#itemsTable, #ordersTable').DataTable({
         "scrollX": true,
-        "scrollY": 200,
-    });
-    $('.dataTables_length').addClass('bs-select');
-});
-
-$(document).ready(function () {
-    $('#itemsTable').dataTable({
+        "scrollY": 400,
+        "searching" : true,
 
         initComplete: function () {
             this.api().columns().every( function () {

@@ -8,7 +8,7 @@
     </div>
     <div class="row">
         <div class="itemsTableWrapper">
-            <table id="itemsTable" class="table table-hover table-responsive" style="font-size: 0.85rem;">
+            <table id="itemsTable" class="table table-hover" style="font-size: 0.85rem;">
                 <thead class="thead-light">
                 <tr class="text-center">
                     <th colspan="4"></th>
@@ -41,23 +41,10 @@
                     <td class="text-center" th:text="${item.price7days}"></td>
                     <td class="text-center" th:text="${item.price1year}"></td>
                     <td class="text-center">
-                        <a th:attr="data-item-id=${item.id}" data-confirm="Czy na pewno usunąć?" class="fas fa-trash text-danger"></a>
+                        <a th:attr="data-item-id=${item.id},data-confirm='Czy na pewno usunąć ' + ${item.name} + '?'" class="fas fa-trash text-danger"></a>
                     </td>
                 </tr>
                 </tbody>
-                <tfoot>
-                <tr class="text-center">
-                    <th>ID</th>
-                    <th>Nazwa</th>
-                    <th>Opis</th>
-                    <th>Kategoria</th>
-                    <th class="border-left">1 dzień</th>
-                    <th>3 dni</th>
-                    <th>7 dni</th>
-                    <th class="border-right">1 rok</th>
-                    <th>Usuń</th>
-                </tr>
-                </tfoot>
             </table>
         </div>
     </div>

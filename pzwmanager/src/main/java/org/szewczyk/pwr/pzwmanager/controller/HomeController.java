@@ -1,5 +1,6 @@
 package org.szewczyk.pwr.pzwmanager.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +13,7 @@ import org.szewczyk.pwr.pzwmanager.service.OrderService;
 import org.szewczyk.pwr.pzwmanager.service.PersonService;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -28,8 +30,12 @@ public class HomeController {
     @Resource
     private OrderService orderService;
 
+    @Autowired
+    private HttpServletRequest request;
+
     @GetMapping(value = "/")
     public ModelAndView hello(){
+        System.out.println(request.getRemoteHost());
         ModelAndView modelAndView = new ModelAndView("main");
         Cart newCart = new Cart();
         String currentSessionId = RequestContextHolder.currentRequestAttributes().getSessionId();
@@ -38,7 +44,6 @@ public class HomeController {
             newCart.setSessionId(currentSessionId);
             cartService.saveCart(newCart);
         }
-//        modelAndView.addObject("cart", newCart);
         return modelAndView;
     }
 
@@ -59,42 +64,6 @@ public class HomeController {
                         BigDecimal.valueOf(4.0), BigDecimal.valueOf(8.0), BigDecimal.valueOf(12.0), BigDecimal.valueOf(16.0)));
         return modelAndView;
     }
-
-//    @GetMapping(value = "oplaty")
-//    public ModelAndView mainWindow(){
-//        return new ModelAndView("main");
-//    }
-
-//    @GetMapping(value = "dodaj")
-//    public ModelAndView addUser(){
-//        ModelAndView modelAndView = new ModelAndView();
-//        Person person = new Person();
-//        modelAndView.addObject("user", person);
-//        modelAndView.setViewName("newClient");
-//        return modelAndView;
-//    }
-//
-//    @PostMapping(value = "dodaj")
-//    public ModelAndView addNewUser(@Valid Person person, BindingResult bindingResult){
-//        ModelAndView modelAndView = new ModelAndView();
-//        Person personExists = personService.findByCardNumber(person.getCardNumber());
-//        if (personExists != null){
-//            bindingResult.rejectValue("cardId", "error.user", "Użytkownik z takim numerem karty już istnieje");
-//        }
-//        if (bindingResult.hasErrors()){
-//            modelAndView.setViewName("newClient");
-//        } else {
-//            personService.saveUser(person);
-//            modelAndView.addObject("successMessage", "Pomyślnie dodano użytkownika");
-//            modelAndView.addObject("person", new Person());
-//            modelAndView.setViewName("newClient");
-//        }
-//        return modelAndView;
-//    }
-
-
-
-
 
     @GetMapping(value = "productList")
     public ModelAndView showProductList(@RequestParam(value = "member") final boolean member){
@@ -141,49 +110,6 @@ public class HomeController {
         modelAndView.addObject("order", newOrder);
 
         modelAndView.setViewName("cart");
-        return modelAndView;
-    }
-
-    @RequestMapping(value = "finalizeOrder")
-    public ModelAndView finalizeOrder(Order order){
-        ModelAndView modelAndView = new ModelAndView();
-        String currentSessionId = RequestContextHolder.currentRequestAttributes().getSessionId();
-        Cart cart = cartService.findBySessionId(currentSessionId);
-        Order placedOrder = new Order();
-
-        order.setDate(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE));
-        order.setOrderNumber();
-        order.getOrderItems().addAll(cart.getOrderedItems());
-        cart.getOrderedItems().clear();
-//        cartService.deleteCart(cart);
-        order.setValue(cart.getSumPrice());
-        orderService.saveOrder(order);
-
-        System.out.println("----> Zamówienie nr: " + order.getOrder_number() + " o wartości: " + order.getValue()
-                + " na adres: " + order.getEmail());
-        modelAndView.addObject("orderDetails", order);
-        modelAndView.setViewName("finalizeOrder");
-        return modelAndView;
-    }
-
-    @GetMapping(value = "/cart")
-    public ModelAndView openCart(){
-        ModelAndView modelAndView = new ModelAndView("cart");
-        String currentSessionId = RequestContextHolder.currentRequestAttributes().getSessionId();
-        System.out.println("Current Session ID ----------------> " + currentSessionId);
-        Cart cartExists = cartService.findBySessionId(currentSessionId);
-        if (cartExists != null){
-            modelAndView.addObject("cart", cartExists);
-        } else {
-            Cart newCart = new Cart();
-            newCart.setSessionId(currentSessionId);
-            modelAndView.addObject("cart", newCart);
-            cartService.saveCart(newCart);
-        }
-        Order newOrder = new Order();
-        newOrder.setDate(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME));
-        orderService.saveOrder(newOrder);
-        modelAndView.addObject("order", newOrder);
         return modelAndView;
     }
 }

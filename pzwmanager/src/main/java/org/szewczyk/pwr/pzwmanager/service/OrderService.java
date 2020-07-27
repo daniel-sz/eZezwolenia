@@ -21,6 +21,7 @@ public class OrderService {
         orderRepository.save(order);
         return order;
     }
+    public void deleteById(long id){ orderRepository.deleteById(id); }
     public List<Order> findAll(){ return orderRepository.findAll(); }
 
 }

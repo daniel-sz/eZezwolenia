@@ -46,7 +46,7 @@
         <div class="col-lg-4">
             <div class="container">
                 <h4>Dokończ zamówienie</h4>
-                <form class="text-center" method="post" th:action="@{/finalizeOrder}" th:object="${order}">
+                <form class="text-center" method="post" th:action="@{/cart/finalizeOrder}" th:object="${order}">
                     <div class="form-group col-12">
                         <label for="email">Adres e-mail</label>
                         <input class="form-control" type="email" id="email" th:field="${order.email}">

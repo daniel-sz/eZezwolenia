@@ -1,0 +1,33 @@
+<div class="container" xmlns:th="http://www.thymeleaf.org">
+    <div class="row">
+        <div class="ordersTableWrapper my-2 mx-auto">
+            <table id="ordersTable" class="table table-hover" style="font-size: 0.85rem;">
+                <thead class="thead-light">
+                    <tr class="text-center">
+                        <th>ID</th>
+                        <th>Data</th>
+                        <th>Nr zamówienia</th>
+                        <th>Wartość</th>
+                        <th>E-mail</th>
+<!--                        <th>Zawartość zamówienia (ID pozwolenia)</th>-->
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="text-center" th:if="${orders.empty}">
+                        <td colspan="6">Brak zamówień!</td>
+                    </tr>
+                    <tr th:if="${orders != null}" class="text-center" th:each="order : ${orders}">
+                        <td th:text="${order.id}"></td>
+                        <td th:text="${order.date}"></td>
+                        <td th:text="${order.order_number}"></td>
+                        <td th:text="${order.value}"></td>
+                        <td th:text="${order.email}"></td>
+<!--                        <tr th:if="${order.orderItems != null}" th:each="item : ${order.orderItems}">-->
+<!--                            <td th:text="${item.name}"></td>-->
+<!--                        </tr>-->
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

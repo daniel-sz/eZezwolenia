@@ -8,6 +8,9 @@
     <link rel="stylesheet" type="text/css" th:href="@{/css/adminPageTable.css}"/>
     <script th:src="@{/js/jquery.js}"></script>
     <script th:src="@{/js/mdb.js}"></script>
+    <script th:src="@{/js/addons/datatables.min.js}"></script>
+    <script th:src="@{/js/addons/datatables-select.min.js}"></script>
+<!--    <script th:src="@{/js/modules/scrolling-navbar.min.js}"></script>-->
     <script th:src="@{/js/bootstrap.min.js}"></script>
     <script th:src="@{/js/adminScripts.js}"></script>
     <meta charset="UTF-8">
@@ -25,18 +28,27 @@
             <div class="col-lg-3">
                 <div class="d-flex flex-row-reverse">
                     <div class="col-12 mb-2">
-                        <a class="btn btn-outline-secondary" th:text="'Zezwolenia:   ' + ${items.size()}" style="width: 90%;">Lista zezwoleń</a>
+                        <a class="btn btn-outline-dark" th:text="'Zezwolenia:   ' + ${items.size()}"
+                            style="width: 90%;" onclick="$('.itemsDiv').attr('hidden', false); $('.ordersDiv').attr('hidden', true)">
+                            Lista zezwoleń
+                        </a>
                     </div>
                 </div>
                 <div class="d-flex flex-row-reverse">
                     <div class="col-12 mb-2">
-                        <a class="btn btn-outline-secondary" th:text="'Zamówienia:   ' + ${orders.size()}" style="width: 90%;">Historia płatności</a>
+                        <a class="btn btn-outline-dark" th:text="'Zamówienia:   ' + ${orders.size()}"
+                            style="width: 90%;" onclick="$('.ordersDiv').attr('hidden', false); $('.itemsDiv').attr('hidden', true)">
+                            Historia płatności
+                        </a>
                     </div>
                 </div>
             </div>
             <div class="col-lg-9 bg-light border rounded border-secondary">
-                <div class="container container-fluid">
+                <div class="container container-fluid itemsDiv">
                     <div th:insert="admin/fragments/items.html"></div>
+                </div>
+                <div class="container container-fluid ordersDiv" hidden="hidden">
+                    <div th:insert="admin/fragments/orders.html"></div>
                 </div>
             </div>
         </div>
