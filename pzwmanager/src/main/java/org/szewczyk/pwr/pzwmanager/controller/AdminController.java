@@ -24,7 +24,7 @@ public class AdminController {
 
     @GetMapping(value = "")
     public ModelAndView adminHome(){
-        ModelAndView modelAndView = new ModelAndView("/admin/adminPanel");
+        ModelAndView modelAndView = new ModelAndView("admin/adminPanel");
         modelAndView.addObject("items", itemService.findAll());
         modelAndView.addObject("orders", orderService.findAll());
         return modelAndView;
@@ -32,7 +32,7 @@ public class AdminController {
 
     @GetMapping(value = "showItems")
     public ModelAndView showItemsList(){
-        ModelAndView modelAndView = new ModelAndView("/admin/showItems");
+        ModelAndView modelAndView = new ModelAndView("admin/showItems");
         modelAndView.addObject("items", itemService.findAll());
         return modelAndView;
     }
@@ -42,7 +42,7 @@ public class AdminController {
         ModelAndView modelAndView = new ModelAndView();
         Item item = new Item();
         modelAndView.addObject("item", item);
-        modelAndView.setViewName("/admin/addItem");
+        modelAndView.setViewName("admin/addItem");
         return modelAndView;
     }
 
@@ -54,12 +54,12 @@ public class AdminController {
             bindingResult.rejectValue("name", "error.item", "Istnieje już pozycja o takiej nazwie");
         }
         if (bindingResult.hasErrors()){
-            modelAndView.setViewName("/admin/addItem");
+            modelAndView.setViewName("admin/addItem");
         } else {
             itemService.saveItem(item);
             modelAndView.addObject("successMessage", "Pomyślnie dodano do bazy");
             modelAndView.addObject("item", new Item());
-            modelAndView.setViewName("/admin/addItem");
+            modelAndView.setViewName("admin/addItem");
         }
         return modelAndView;
     }

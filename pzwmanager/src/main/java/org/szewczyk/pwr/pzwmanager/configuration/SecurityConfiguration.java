@@ -28,8 +28,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable();
         http.authorizeRequests()
-                .antMatchers("/", "/productList**", "/addToCart", "/cart", "/cart/**", "/finalizeOrder", "/admin/**").permitAll()
-//                .antMatchers("/admin/**").hasRole("ADMIN")
+                .antMatchers("/", "/productList**", "/addToCart", "/cart", "/cart/**", "/finalizeOrder").permitAll()
+                .antMatchers("/admin/**").hasRole("ADMIN")
 //                .anyRequest().authenticated()
                 .and()
                 .formLogin().permitAll();
