@@ -39,7 +39,7 @@ public class HomeController {
         ModelAndView modelAndView = new ModelAndView("main");
         Cart newCart = new Cart();
         String currentSessionId = RequestContextHolder.currentRequestAttributes().getSessionId();
-        System.out.println("Current Session ID ----------------> " + currentSessionId);
+//        System.out.println("Current Session ID ----------------> " + currentSessionId);
         if (cartService.findBySessionId(currentSessionId) == null){
             newCart.setSessionId(currentSessionId);
             cartService.saveCart(newCart);
@@ -89,7 +89,7 @@ public class HomeController {
         orderItem.setItem(itemService.findById(orderItem.getItem().getId()));
         ModelAndView modelAndView = new ModelAndView();
         String currentSessionId = RequestContextHolder.currentRequestAttributes().getSessionId();
-        System.out.println("Current Session ID ----------------> " + currentSessionId);
+//        System.out.println("Current Session ID ----------------> " + currentSessionId);
         Cart cartExists = cartService.findBySessionId(currentSessionId);
         if (cartExists != null){
             cartService.deleteCart(cartExists);

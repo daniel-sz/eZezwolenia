@@ -14,7 +14,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.inMemoryAuthentication()
                 .withUser("admin")
-                .password("{bcrypt}$2y$12$u7bBB9mudaxH2rBz9oooKOSGolfzIZMxwFSqWom/.UE8sBpPo.Agu")
+                .password("admin")
                 .roles("ADMIN");
     }
 
@@ -22,7 +22,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable();
         http.authorizeRequests()
-                .antMatchers("/", "/productList**", "/addToCart", "/cart", "/cart/**").permitAll()
+                .antMatchers("/", "/productList**", "/addToCart", "/cart", "/cart/**", "/finalizeOrder").permitAll()
                 .antMatchers("/admin/**").hasRole("ADMIN")
 //                .anyRequest().authenticated()
                 .and()

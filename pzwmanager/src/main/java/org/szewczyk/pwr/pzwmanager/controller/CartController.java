@@ -3,7 +3,6 @@ package org.szewczyk.pwr.pzwmanager.controller;
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import kong.unirest.Unirest;
-import org.aspectj.weaver.ast.Or;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,16 +15,10 @@ import org.szewczyk.pwr.pzwmanager.service.OrderService;
 
 import javax.annotation.Resource;
 import java.io.File;
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-
-import javax.ws.rs.*;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import java.util.HashMap;
+import java.util.Map;
 
 @Controller
 @RequestMapping(value = "/cart")
@@ -37,9 +30,8 @@ public class CartController {
 
     final String CLIENT_ID = "391888";
     final String CLIENT_SECRET = "486a8f96791e5b64dba56e8154c480b9";
-//    final String CLIENT_ID = "145227";
-//    final String CLIENT_SECRET = "12f071174cb7eb79d4aac5bc2f07563f";
-    final String TARGET_URI = "https://secure.snd.payu.com/pl/standard/user/oauth/authorize";
+    final String AUTH_URL = "https://secure.snd.payu.com/pl/standard/user/oauth/authorize";
+    final String ORDER_URL = "https://secure.snd.payu.com/api/v2_1/orders/";
 
 
     @GetMapping(value = "")
@@ -68,42 +60,81 @@ public class CartController {
         ModelAndView modelAndView = new ModelAndView();
         String currentSessionId = RequestContextHolder.currentRequestAttributes().getSessionId();
         Cart cart = cartService.findBySessionId(currentSessionId);
-        Order placedOrder = new Order();
 
         order.setDate(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE));
-        order.setOrderNumber();
         order.getOrderItems().addAll(cart.getOrderedItems());
-        cart.getOrderedItems().clear();
-//        cartService.deleteCart(cart);
         order.setValue(cart.getSumPrice());
-        orderService.saveOrder(order);
-        order.setOrderNumber();
-        orderService.deleteById(order.getId());
+        order.setOrderNumber((orderService.findAll().size() > 0) ? (orderService.findAll().get(orderService.findAll().size() - 1).getId() + 1) : 1 );
+        order.setStatus(Order.Status.PENDING);
         orderService.saveOrder(order);
 
-        getToken();
+        cart.getOrderedItems().clear();
+        cartService.deleteCart(cart);
 
-        System.out.println("----> Zamówienie nr: " + order.getOrder_number() + " o wartości: " + order.getValue()
-                + " na adres: " + order.getEmail());
+
+        String accessToken = getToken();        // get PayU Oauth2 token
+        String redirectAddress = createPayUOrder(order, accessToken).get("redirectUri");    // create PayU order
+
+
+        if (redirectAddress != null){
+            return new ModelAndView("redirect:" + redirectAddress);
+        }
+
         modelAndView.addObject("orderDetails", order);
         modelAndView.setViewName("finalizeOrder");
         return modelAndView;
     }
 
-    private String getToken(){
-        String amount = orderService.findAll().get(orderService.findAll().size() - 1).getValue().movePointRight(2).toPlainString();
-        System.out.println("PayU amount: " + amount);
+    @GetMapping(value = "notify")
+    public ModelAndView orderStatus(String orderId, String token){
+        ModelAndView modelAndView = new ModelAndView();
+        HttpResponse<JsonNode> jsonResponse = Unirest.get(ORDER_URL + orderId)
+                .header("Authorization", "Bearer " + token)
+                .asJson();
+        System.out.println(jsonResponse.getBody());
+        modelAndView.addObject("item", jsonResponse.getBody());
+        modelAndView.setViewName("finalizeOrder");
+        return modelAndView;
+    }
 
-        HttpResponse<JsonNode> jsonResponse = Unirest.post(TARGET_URI)
-                .header("Content-Type", "application/json")
+    private String getToken(){
+        HttpResponse<JsonNode> jsonResponse = Unirest.post(AUTH_URL)
                 .field("grant_type", "client_credentials")
                 .field("client_id", CLIENT_ID)
                 .field("client_secret", CLIENT_SECRET)
                 .asJson();
-
-        System.out.println(jsonResponse.getStatus() + "\n" + jsonResponse.getBody());
-        return "redirect:/";
+        String accessToken = jsonResponse.getBody().getObject().getString("access_token");
+//        System.out.println("Access token: " + accessToken);
+        return accessToken;
     }
+    private Map<String, String> createPayUOrder(Order order, String token){
+        HttpResponse<JsonNode> jsonResponse = Unirest.post(ORDER_URL)
+                .header("Content-Type", "application/json")
+                .header("Authorization", "Bearer " + token)
+                .body("{\"notifyUrl\": \"https://localhost:8888/notify\", " +
+                        "\"customerIp\": \"127.0.0.1\", " +
+                        "\"merchantPosId\": \"391888\", " +
+                        "\"description\": \"Platnosc za pozwolenie\", " +
+                        "\"currencyCode\": \"PLN\", " +
+                        "\"totalAmount\": \"" + order.getValue().movePointRight(2).toString() + "\", " +
+                        "\"extOrderId\": \"" + order.getOrder_number() + "\", " +
+                        "\"buyer\": {" +
+                            "\"email\": \"" + order.getEmail() + "\", " +
+//                            "\"phone\": \"654111654\", " +
+                            "\"firstName\": \"" + order.getOrderItems().get(order.getOrderItems().size() - 1).getPerson().getFirstName() + "\", " +
+                            "\"lastName\": \"" + order.getOrderItems().get(order.getOrderItems().size() - 1).getPerson().getLastName() + "\" }," +
+                        "\"products\": [{" +
+                            "\"name\": \"Zamówienie nr " + order.getOrder_number() + "\", " +
+                            "\"unitPrice\": \"" + order.getValue().movePointRight(2).toString() + "\", " +
+                            "\"quantity\": \"1\"}]}")
+                .asJson();
+
+        Map<String, String> orderDetails = new HashMap<>();
+        orderDetails.put("redirectUri", jsonResponse.getBody().getObject().getString("redirectUri"));
+        orderDetails.put("orderId", jsonResponse.getBody().getObject().getString("orderId"));
+        return orderDetails;
+    }
+
 
     private void pdfInvoiceGenerator(Order order){
         File tempDir = new File("." + File.separator + "tempInvoices");

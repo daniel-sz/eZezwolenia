@@ -14,6 +14,11 @@ import java.util.List;
 @Entity
 @Table(name = "orders")
 public class Order {
+    public enum Status{
+        PENDING,
+        ERROR,
+        SUCCESS
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,6 +42,12 @@ public class Order {
     @JoinTable(name = "order_all_items", joinColumns = @JoinColumn(name = "order_id"), inverseJoinColumns = @JoinColumn(name = "order_item_id"))
     private List<OrderItem> orderItems = new ArrayList<>();
 
+    @Column(name = "status")
+    private Status status;
+
+    @Column(name = "payu_order_id")
+    private String payuOrderId;
+
     public Order(){}
-    public void setOrderNumber(){ this.order_number = "PZW/Kud/" + this.id + "/" + this.date.substring(0, 4); }
+    public void setOrderNumber(long sn){ this.order_number = "PZW-Kud/" + sn + "/" + this.date.substring(0, 4); }
 }

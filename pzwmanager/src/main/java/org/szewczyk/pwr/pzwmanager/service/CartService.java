@@ -29,7 +29,7 @@ public class CartService {
 
     @Transactional
     public Cart deleteCart(Cart cart){
-        System.out.println("\\____________DELETING CART____________/");
+//        System.out.println("\\____________DELETING CART____________/");
         cartRepository.removeCartBySessionId(cart.getSessionId());
         cartRepository.flush();
         return cart;
