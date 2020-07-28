@@ -144,6 +144,8 @@ public class CartController {
 
     private void pdfInvoiceGenerator(Order order){
         File tempDir = new File("." + File.separator + "tempInvoices");
+        if (!tempDir.exists() && !tempDir.isDirectory()) tempDir.mkdir();
+
         File template = new File(tempDir + File.separator + "invoiceTemplate.tex");
     }
 }
