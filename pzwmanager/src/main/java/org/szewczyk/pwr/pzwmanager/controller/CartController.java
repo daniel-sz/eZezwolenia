@@ -130,8 +130,14 @@ public class CartController {
                 .asJson();
 
         Map<String, String> orderDetails = new HashMap<>();
-        orderDetails.put("redirectUri", jsonResponse.getBody().getObject().getString("redirectUri"));
-        orderDetails.put("orderId", jsonResponse.getBody().getObject().getString("orderId"));
+        try {
+            orderDetails.put("redirectUri", jsonResponse.getBody().getObject().getString("redirectUri"));
+            orderDetails.put("orderId", jsonResponse.getBody().getObject().getString("orderId"));
+        } catch (Exception e){
+            e.printStackTrace();
+            orderDetails.put("redirectUri", "");
+            orderDetails.put("orderId", "null");
+        }
         return orderDetails;
     }
 
