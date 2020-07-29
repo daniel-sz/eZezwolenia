@@ -11,7 +11,7 @@ import java.util.Optional;
 @Service
 public class PersonService {
 
-    private PersonRepository personRepository;
+    private final PersonRepository personRepository;
     private List<Person> people;
 
     @Autowired
@@ -19,8 +19,8 @@ public class PersonService {
         this.personRepository = personRepository;
     }
 
-    public Optional<Person> findById(Long id){
-        return personRepository.findById(id);
+    public Person findById(Long id){
+        return personRepository.findById(id).orElseThrow();
     }
     public Person findByLastName(String lastName){ return personRepository.findByLastName(lastName); }
     public Person findByCardNumber(String cardNumber){ return personRepository.findByCardNumber(cardNumber); }

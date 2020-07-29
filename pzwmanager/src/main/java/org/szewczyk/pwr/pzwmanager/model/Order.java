@@ -5,7 +5,10 @@ import lombok.Data;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.xml.bind.DatatypeConverter;
 import java.math.BigDecimal;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,5 +52,16 @@ public class Order {
     private String payuOrderId;
 
     public Order(){}
-    public void setOrderNumber(long sn){ this.order_number = "PZW-Kud/" + sn + "/" + this.date.substring(0, 4); }
+    public void setOrderNumber(){
+        String orderNum = "PZW/Kud/" + this.date;
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            md.update(this.date.getBytes());
+            byte[] digest = md.digest();
+            orderNum = orderNum.concat("/" + DatatypeConverter.printHexBinary(digest).toUpperCase());
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        this.order_number = orderNum;
+    }
 }

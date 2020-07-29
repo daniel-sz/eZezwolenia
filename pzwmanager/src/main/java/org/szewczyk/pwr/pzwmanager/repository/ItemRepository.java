@@ -8,8 +8,6 @@ import java.util.List;
 
 @Repository
 public interface ItemRepository extends JpaRepository<Item, Long> {
-
     public Item findByName(final String name);
-    public Item findById(final long id);
     public List<Item> findAllByItemCategory(final Item.category cat);
 }

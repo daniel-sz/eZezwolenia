@@ -9,14 +9,11 @@ import java.util.List;
 
 @Service
 public class OrderItemService {
-    private OrderItemRepository orderItemRepository;
+    private final OrderItemRepository orderItemRepository;
 
     @Autowired
     public OrderItemService(OrderItemRepository orderItemRepository){ this.orderItemRepository = orderItemRepository; }
 
-    public List<OrderItem> findAllByPerson_CardNumber(String cardNumber){
-        return orderItemRepository.findAllByPerson_CardNumber(cardNumber);
-    }
 
     public OrderItem saveOrderItem(OrderItem orderItem){
         orderItemRepository.save(orderItem);

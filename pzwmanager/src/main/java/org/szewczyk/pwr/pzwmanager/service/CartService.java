@@ -10,14 +10,11 @@ import javax.transaction.Transactional;
 
 @Service
 public class CartService {
-    CartRepository cartRepository;
+    private final CartRepository cartRepository;
 
     @Autowired
     public CartService(CartRepository cartRepository){ this.cartRepository = cartRepository; }
 
-    public Cart findById(long id){
-        return cartRepository.findById(id);
-    }
     public Cart findBySessionId(String sessionId){ return cartRepository.findBySessionId(sessionId); }
 
     @Transactional
