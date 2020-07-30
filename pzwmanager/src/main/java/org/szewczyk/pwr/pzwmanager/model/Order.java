@@ -32,7 +32,7 @@ public class Order {
     private String date;
 
     @Column(name = "order_number")
-    private String order_number;
+    private String orderNumber;
 
     @Column(name = "value")
     private BigDecimal value;
@@ -53,7 +53,7 @@ public class Order {
 
     public Order(){}
     public void setOrderNumber(){
-        String orderNum = "PZW/Kud/" + this.date;
+        String orderNum = "PZW/Kud/" + this.date.substring(0,7);
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
             md.update(this.date.getBytes());
@@ -62,6 +62,6 @@ public class Order {
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
-        this.order_number = orderNum;
+        this.orderNumber = orderNum;
     }
 }

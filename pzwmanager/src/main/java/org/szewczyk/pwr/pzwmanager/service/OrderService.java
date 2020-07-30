@@ -15,7 +15,9 @@ public class OrderService {
     @Autowired
     public OrderService(OrderRepository orderRepository){ this.orderRepository = orderRepository; }
 
-    public List<Order> findAllByDate(LocalDate date){ return orderRepository.findAllByDate(date); }
+    public Order findByOrderNum(String num){ return orderRepository.findFirstByOrderNumber(num); }
+
+    public List<Order> findAllByDate(String date){ return orderRepository.findAllByDate(date); }
     public List<Order> findAllByEmail(String email){ return  orderRepository.findAllByEmail(email); }
     public Order saveOrder(Order order){
         orderRepository.save(order);

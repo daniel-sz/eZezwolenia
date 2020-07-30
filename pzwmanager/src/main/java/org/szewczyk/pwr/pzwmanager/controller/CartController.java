@@ -63,7 +63,7 @@ public class CartController {
         String currentSessionId = RequestContextHolder.currentRequestAttributes().getSessionId();
         Cart cart = cartService.findBySessionId(currentSessionId);
 
-        order.setDate(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd-HH:mm:ss.AAA")));
+        order.setDate(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd,HH:mm:ss.AAA")));
         order.getOrderItems().addAll(cart.getOrderedItems());
         order.setValue(cart.getSumPrice());
         order.setOrderNumber();
@@ -77,9 +77,9 @@ public class CartController {
         String accessToken = getToken();        // get PayU Oauth2 token
         Map<String, String> response = createPayUOrder(order, accessToken);
         String redirectAddress = response.get("redirectUri");    // create PayU order
-        System.out.println("LOG -------------> ExtOrderId: " + order.getOrder_number());
-        System.out.println("LOG -------------> TOKEN: " + accessToken);
-        System.out.println("LOG -------------> OrderID: " + response.get("orderId"));
+//        System.out.println("LOG -------------> ExtOrderId: " + order.getOrderNumber());
+//        System.out.println("LOG -------------> TOKEN: " + accessToken);
+//        System.out.println("LOG -------------> OrderID: " + response.get("orderId"));
         order.setPayuOrderId(response.get("orderId"));
         orderService.saveOrder(order);
 
@@ -91,12 +91,24 @@ public class CartController {
     }
 
     @GetMapping(value = "notify")
-    public ModelAndView orderStatus(@RequestParam(name = "token") String token){
+    public ModelAndView orderStatus(){
+        String token = getToken();
         ModelAndView modelAndView = new ModelAndView();
         HttpResponse<JsonNode> jsonResponse = Unirest.get(ORDER_URL + orderService.findAll().get(orderService.findAll().size() - 1).getPayuOrderId())
                 .header("Authorization", "Bearer " + token)
                 .asJson();
-        System.out.println(jsonResponse.getBody().getObject().getString());
+        String status = jsonResponse.getBody().getObject().getJSONObject("status").getString("statusCode");
+        String orderNum = jsonResponse.getBody().getObject().getJSONArray("orders").getJSONObject(0).getString("extOrderId");
+        String payuOrderId = jsonResponse.getBody().getObject().getJSONArray("properties").getJSONObject(0).getString("value");
+
+        if (status.equals("SUCCESS")){
+//            System.out.println("OrderNum: " + orderNum);
+//            System.out.println("PayU Order ID: " + payuOrderId);
+            System.out.println("----- PAYMENT no. " + payuOrderId + " SUCCESS!!! -----");
+            Order o = orderService.findByOrderNum(orderNum);
+            o.setStatus(Order.Status.SUCCESS);
+//            o.setPayuOrderId(payuOrderId);
+        }
         modelAndView.addObject("item", jsonResponse.getBody());
         modelAndView.setViewName("finalizeOrder");
         return modelAndView;
@@ -108,35 +120,34 @@ public class CartController {
                 .field("client_id", CLIENT_ID)
                 .field("client_secret", CLIENT_SECRET)
                 .asJson();
-        String accessToken = jsonResponse.getBody().getObject().getString("access_token");
-//        System.out.println("Access token: " + accessToken);
-        return accessToken;
+        //        System.out.println("Access token: " + accessToken);
+        return jsonResponse.getBody().getObject().getString("access_token");
     }
     private Map<String, String> createPayUOrder(Order order, String token){
         CompletableFuture<HttpResponse<JsonNode>> jsonResponse = Unirest.post(ORDER_URL)
                 .header("Content-Type", "application/json")
                 .header("Authorization", "Bearer " + token)
-                .body("{\"notifyUrl\": \"http://localhost:8888/cart/notify?token=" + token + "\", " +
+                .body("{\"notifyUrl\": \"https://e-zezwolenia.herokuapp.com/cart/notify\", " +
                         "\"customerIp\": \"127.0.0.1\", " +
                         "\"merchantPosId\": \"" + CLIENT_ID + "\", " +
                         "\"description\": \"Platnosc za pozwolenie\", " +
                         "\"currencyCode\": \"PLN\", " +
                         "\"totalAmount\": \"" + order.getValue().movePointRight(2).toString() + "\", " +
-                        "\"extOrderId\": \"" + order.getOrder_number() + "\", " +
+                        "\"extOrderId\": \"" + order.getOrderNumber() + "\", " +
                         "\"buyer\": {" +
                             "\"email\": \"" + order.getEmail() + "\", " +
 //                            "\"phone\": \"654111654\", " +
                             "\"firstName\": \"" + order.getOrderItems().get(order.getOrderItems().size() - 1).getPerson().getFirstName() + "\", " +
                             "\"lastName\": \"" + order.getOrderItems().get(order.getOrderItems().size() - 1).getPerson().getLastName() + "\" }," +
                         "\"products\": [{" +
-                            "\"name\": \"Zamówienie nr " + order.getOrder_number() + "\", " +
+                            "\"name\": \"Zamowienie nr " + order.getOrderNumber() + "\", " +
                             "\"unitPrice\": \"" + order.getValue().movePointRight(2).toString() + "\", " +
                             "\"quantity\": \"1\"}]}")
                 .asJsonAsync(httpResponse -> {
                     int code = httpResponse.getStatus();
                     JsonNode body = httpResponse.getBody();
-                    System.out.println("Code: " + code);
-                    System.out.println("Body: " + body);
+//                    System.out.println("Code: " + code);
+//                    System.out.println("Body: " + body);
                 });
 
         Map<String, String> orderDetails = new HashMap<>();
