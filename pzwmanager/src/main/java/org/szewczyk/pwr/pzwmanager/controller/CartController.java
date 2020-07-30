@@ -5,6 +5,7 @@ import kong.unirest.JsonNode;
 import kong.unirest.Unirest;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -90,7 +91,7 @@ public class CartController {
         return "redirect:";
     }
 
-    @GetMapping(value = "notify")
+    @PostMapping(value = "notify")
     public ModelAndView orderStatus(){
         String token = getToken();
         ModelAndView modelAndView = new ModelAndView();
