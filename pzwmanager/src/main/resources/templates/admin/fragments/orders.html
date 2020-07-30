@@ -9,22 +9,20 @@
                         <th>Nr zamówienia</th>
                         <th>Wartość</th>
                         <th>E-mail</th>
-<!--                        <th>Zawartość zamówienia (ID pozwolenia)</th>-->
+                        <th>Status</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr class="text-center" th:if="${orders.empty}">
-                        <td colspan="6">Brak zamówień!</td>
+                        <td colspan="7">Brak zamówień!</td>
                     </tr>
                     <tr th:if="${orders != null}" class="text-center" th:each="order : ${orders}">
                         <td th:text="${order.id}"></td>
                         <td th:text="${order.date}"></td>
-                        <td th:text="${order.order_number}"></td>
+                        <td th:text="${order.orderNumber}"></td>
                         <td th:text="${order.value}"></td>
                         <td th:text="${order.email}"></td>
-<!--                        <tr th:if="${order.orderItems != null}" th:each="item : ${order.orderItems}">-->
-<!--                            <td th:text="${item.name}"></td>-->
-<!--                        </tr>-->
+                        <td th:text="${order.status}"></td>
                     </tr>
                 </tbody>
             </table>
