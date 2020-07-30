@@ -92,8 +92,9 @@ public class CartController {
     }
 
     @PostMapping(value = "notify")
-    public void orderStatus(){
+    public ModelAndView orderStatus(){
         String token = getToken();
+        ModelAndView modelAndView = new ModelAndView();
         HttpResponse<JsonNode> jsonResponse = Unirest.get(ORDER_URL + orderService.findAll().get(orderService.findAll().size() - 1).getPayuOrderId())
                 .header("Authorization", "Bearer " + token)
                 .asJson();
@@ -102,15 +103,14 @@ public class CartController {
         String payuOrderId = jsonResponse.getBody().getObject().getJSONArray("properties").getJSONObject(0).getString("value");
 
         if (status.equals("SUCCESS")){
-//            System.out.println("OrderNum: " + orderNum);
-//            System.out.println("PayU Order ID: " + payuOrderId);
             System.out.println("----- PAYMENT no. " + payuOrderId + " SUCCESS!!! -----");
             Order o = orderService.findByOrderNum(orderNum);
             o.setStatus(Order.Status.SUCCESS);
             orderService.saveOrder(o);
-//            o.setPayuOrderId(payuOrderId);
         }
-
+        modelAndView.addObject("item", jsonResponse.getBody());
+        modelAndView.setViewName("finalizeOrder");
+        return modelAndView;
     }
 
     private String getToken(){
