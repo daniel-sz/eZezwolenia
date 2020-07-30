@@ -1,6 +1,7 @@
 package org.szewczyk.pwr.pzwmanager.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -30,12 +31,12 @@ public class HomeController {
     @Resource
     private OrderService orderService;
 
-    @Autowired
+
     private HttpServletRequest request;
 
     @GetMapping(value = "/")
     public ModelAndView hello(){
-        System.out.println(request.getRemoteHost());
+//        System.out.println(request.getRemoteHost());
         ModelAndView modelAndView = new ModelAndView("main");
         Cart newCart = new Cart();
         String currentSessionId = RequestContextHolder.currentRequestAttributes().getSessionId();

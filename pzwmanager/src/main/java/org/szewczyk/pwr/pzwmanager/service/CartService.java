@@ -15,7 +15,7 @@ public class CartService {
     @Autowired
     public CartService(CartRepository cartRepository){ this.cartRepository = cartRepository; }
 
-    public Cart findBySessionId(String sessionId){ return cartRepository.findBySessionId(sessionId); }
+    public Cart findBySessionId(String sessionId){ return cartRepository.findBySessionId(sessionId).orElse(null); }
 
     @Transactional
     public Cart saveCart(Cart cart){
