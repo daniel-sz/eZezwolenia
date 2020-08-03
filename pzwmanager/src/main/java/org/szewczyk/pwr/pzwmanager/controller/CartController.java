@@ -111,17 +111,17 @@ public class CartController {
             o.setStatus(Order.Status.SUCCESS);
             orderService.saveOrder(o);
             String mailAddress = o.getEmail();
-            String subject = "Potwierdzenie zamówienia " + o.getOrderNumber() + " i płatności nr " + payuOrderId;
+            String subject = "Potwierdzenie zamowienia " + o.getOrderNumber() + " i platnosci nr " + payuOrderId;
             String mailText =
             """
                 Witamy w serwisie e-Zezwolenia,
                 
-                W załączniku znajduje się plik z potwierdzeniem zamówienia.
-                Zapraszamy z tym plikiem (w wersji elektronicznej lub wydrukowanej) do zarządu PZW po odbiór wymaganych naklejek.
+                W załączniku znajduje się plik z potwierdzeniem zamowienia.
+                Zapraszamy z tym plikiem (w wersji elektronicznej lub wydrukowanej) do zarzadu PZW po odbior wymaganych naklejek.
                 
-                Dziękujemy za skorzystanie z naszych usług. 
+                Dziękujemy za skorzystanie z naszych uslug. 
                 Pozdr 
-                CEO tego gówna na patyku xD
+                CEO tego przybytku
                 Daniel Szewczyk
             """;
             try {
