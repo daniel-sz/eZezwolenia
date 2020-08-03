@@ -106,30 +106,30 @@ public class CartController {
         String payuOrderId = jsonResponse.getBody().getObject().getJSONArray("properties").getJSONObject(0).getString("value");
 
         if (status.equals("SUCCESS")){
-            System.out.println("----- PAYMENT no. " + payuOrderId + " SUCCESS!!! -----");
+//            System.out.println("----- PAYMENT no. " + payuOrderId + " SUCCESS!!! -----");
             Order o = orderService.findByOrderNum(orderNum);
-            if (o != null && o.getStatus() == Order.Status.PENDING){
+            if (o != null && o.getStatus().equals(Order.Status.PENDING)){
                 o.setStatus(Order.Status.SUCCESS);
                 orderService.saveOrder(o);
+                pdfInvoiceGenerator(o);
                 String mailAddress = o.getEmail();
                 String subject = "Potwierdzenie zamowienia " + o.getOrderNumber() + " i platnosci nr " + payuOrderId;
                 String mailText =
                         """
-                            Witamy w serwisie e-Zezwolenia,
-                            
-                            W załączniku znajduje się plik z potwierdzeniem zamowienia.
-                            Zapraszamy z tym plikiem (w wersji elektronicznej lub wydrukowanej) do zarzadu PZW po odbior wymaganych naklejek.
-                            
-                            Dziękujemy za skorzystanie z naszych uslug. 
-                            Pozdr 
-                            CEO tego przybytku
-                            Daniel Szewczyk
-                        """;
+                                Witamy w serwisie e-Zezwolenia,
+
+                                W załączniku będzie znajdował się plik z potwierdzeniem zamowienia.
+                                Zapraszamy z tym plikiem (w wersji elektronicznej lub wydrukowanej) do zarzadu PZW po odbior wymaganych naklejek.
+                                Dziękujemy za skorzystanie z naszych uslug.
+
+                                Pozdrawiam
+                                Twórca tego przybytku,
+                                Daniel Szewczyk""";
                 try {
                     mailService.sendMail(mailAddress, subject, mailText, false);
                     System.out.println(" - Mail wysłany - ");
                 } catch (MessagingException e) {
-                    System.out.println(" - Wywaliło wyjątek - ");
+                    System.out.println(" - Wyjątek podczas wysyłania maila - ");
 //                e.printStackTrace();
                 }
             }
@@ -190,10 +190,13 @@ public class CartController {
 
 
     private void pdfInvoiceGenerator(Order order){
-        File tempDir = new File("." + File.separator + "tempInvoices");
-        if (!tempDir.exists() && !tempDir.isDirectory()) tempDir.mkdir();
+        File workingDir = new File("." + File.separator + "Invoices");
+        if (!workingDir.exists() && !workingDir.isDirectory()) workingDir.mkdirs();
 
-        File template = new File(tempDir + File.separator + "invoiceTemplate.tex");
+        File template = new File(workingDir + File.separator + "template.tex");
+        File tempDir = new File(workingDir.getAbsolutePath() + File.separator + "temp");
+        if (!tempDir.isDirectory()) tempDir.mkdir();
+        File invoice = new File(tempDir.getAbsolutePath() + File.separator + "invoice.tex");
     }
 }
 

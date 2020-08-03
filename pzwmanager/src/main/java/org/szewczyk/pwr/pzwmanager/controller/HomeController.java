@@ -1,19 +1,18 @@
 package org.szewczyk.pwr.pzwmanager.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.servlet.ModelAndView;
-import org.szewczyk.pwr.pzwmanager.model.*;
+import org.szewczyk.pwr.pzwmanager.model.Cart;
+import org.szewczyk.pwr.pzwmanager.model.Item;
+import org.szewczyk.pwr.pzwmanager.model.Order;
+import org.szewczyk.pwr.pzwmanager.model.OrderItem;
 import org.szewczyk.pwr.pzwmanager.service.*;
 
 import javax.annotation.Resource;
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -50,8 +49,8 @@ public class HomeController {
     private MailService mailService;
     @RequestMapping(value = "/sendmail")
     public String sendMail() throws MessagingException{
-        mailService.sendMail("psk1ne@wp.pl", "Testowy mail", "Testowa treść", false);
-        System.out.println("Wysłano!");
+//        mailService.sendMail("psk1ne@wp.pl", "Testowy mail", "Testowa treść", false);
+//        System.out.println("Wysłano!");
         return "main";
     }
 
