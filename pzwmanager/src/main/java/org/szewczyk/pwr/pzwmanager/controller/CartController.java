@@ -108,7 +108,7 @@ public class CartController {
         if (status.equals("SUCCESS")){
             System.out.println("----- PAYMENT no. " + payuOrderId + " SUCCESS!!! -----");
             Order o = orderService.findByOrderNum(orderNum);
-            if (o != null){
+            if (o != null && o.getStatus() == Order.Status.PENDING){
                 o.setStatus(Order.Status.SUCCESS);
                 orderService.saveOrder(o);
                 String mailAddress = o.getEmail();
