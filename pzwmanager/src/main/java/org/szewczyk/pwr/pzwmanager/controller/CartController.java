@@ -108,28 +108,30 @@ public class CartController {
         if (status.equals("SUCCESS")){
             System.out.println("----- PAYMENT no. " + payuOrderId + " SUCCESS!!! -----");
             Order o = orderService.findByOrderNum(orderNum);
-            o.setStatus(Order.Status.SUCCESS);
-            orderService.saveOrder(o);
-            String mailAddress = o.getEmail();
-            String subject = "Potwierdzenie zamowienia " + o.getOrderNumber() + " i platnosci nr " + payuOrderId;
-            String mailText =
-            """
-                Witamy w serwisie e-Zezwolenia,
-                
-                W załączniku znajduje się plik z potwierdzeniem zamowienia.
-                Zapraszamy z tym plikiem (w wersji elektronicznej lub wydrukowanej) do zarzadu PZW po odbior wymaganych naklejek.
-                
-                Dziękujemy za skorzystanie z naszych uslug. 
-                Pozdr 
-                CEO tego przybytku
-                Daniel Szewczyk
-            """;
-            try {
-                mailService.sendMail(mailAddress, subject, mailText, false);
-                System.out.println(" - Mail wysłany - ");
-            } catch (MessagingException e) {
-                System.out.println(" - Wywaliło wyjątek - ");
+            if (o != null){
+                o.setStatus(Order.Status.SUCCESS);
+                orderService.saveOrder(o);
+                String mailAddress = o.getEmail();
+                String subject = "Potwierdzenie zamowienia " + o.getOrderNumber() + " i platnosci nr " + payuOrderId;
+                String mailText =
+                        """
+                            Witamy w serwisie e-Zezwolenia,
+                            
+                            W załączniku znajduje się plik z potwierdzeniem zamowienia.
+                            Zapraszamy z tym plikiem (w wersji elektronicznej lub wydrukowanej) do zarzadu PZW po odbior wymaganych naklejek.
+                            
+                            Dziękujemy za skorzystanie z naszych uslug. 
+                            Pozdr 
+                            CEO tego przybytku
+                            Daniel Szewczyk
+                        """;
+                try {
+                    mailService.sendMail(mailAddress, subject, mailText, false);
+                    System.out.println(" - Mail wysłany - ");
+                } catch (MessagingException e) {
+                    System.out.println(" - Wywaliło wyjątek - ");
 //                e.printStackTrace();
+                }
             }
         }
         modelAndView.addObject("item", jsonResponse.getBody());
