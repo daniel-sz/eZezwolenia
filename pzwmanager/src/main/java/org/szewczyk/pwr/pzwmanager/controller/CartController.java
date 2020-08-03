@@ -13,9 +13,11 @@ import org.springframework.web.servlet.ModelAndView;
 import org.szewczyk.pwr.pzwmanager.model.Cart;
 import org.szewczyk.pwr.pzwmanager.model.Order;
 import org.szewczyk.pwr.pzwmanager.service.CartService;
+import org.szewczyk.pwr.pzwmanager.service.MailService;
 import org.szewczyk.pwr.pzwmanager.service.OrderService;
 
 import javax.annotation.Resource;
+import javax.mail.MessagingException;
 import java.io.File;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -31,6 +33,8 @@ public class CartController {
     private CartService cartService;
     @Resource
     private OrderService orderService;
+    @Resource
+    private MailService mailService;
 
     final String CLIENT_ID = "391607";
     final String CLIENT_SECRET = "7ed04dd6f7ff71a7b5f010b759b575d0";
@@ -103,10 +107,30 @@ public class CartController {
         String payuOrderId = jsonResponse.getBody().getObject().getJSONArray("properties").getJSONObject(0).getString("value");
 
         if (status.equals("SUCCESS")){
-            System.out.println("----- PAYMENT no. " + payuOrderId + " SUCCESS!!! -----");
+//            System.out.println("----- PAYMENT no. " + payuOrderId + " SUCCESS!!! -----");
             Order o = orderService.findByOrderNum(orderNum);
             o.setStatus(Order.Status.SUCCESS);
             orderService.saveOrder(o);
+            String mailAddress = o.getEmail();
+            String subject = "Potwierdzenie zamówienia " + o.getOrderNumber();
+            String mailText =
+            """
+                Witamy w serwisie e-Zezwolenia,
+                
+                W załączniku znajduje się plik z potwierdzeniem zamówienia.
+                Zapraszamy z tym plikiem (w wersji elektronicznej lub wydrukowanej) do zarządu PZW po odbiór wymaganych naklejek.
+                
+                Dziękujemy za skorzystanie z naszych usług. 
+                Pozdr 
+                CEO tego gówna na patyku xD
+                Daniel Szewczyk
+            """;
+            try {
+                mailService.sendMail(mailAddress, subject, mailText, false);
+                System.out.println(" - Mail wysłany - ");
+            } catch (MessagingException e) {
+                e.printStackTrace();
+            }
         }
         modelAndView.addObject("item", jsonResponse.getBody());
         modelAndView.setViewName("finalizeOrder");

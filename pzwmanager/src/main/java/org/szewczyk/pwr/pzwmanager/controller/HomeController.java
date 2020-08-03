@@ -8,12 +8,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.servlet.ModelAndView;
 import org.szewczyk.pwr.pzwmanager.model.*;
-import org.szewczyk.pwr.pzwmanager.service.CartService;
-import org.szewczyk.pwr.pzwmanager.service.ItemService;
-import org.szewczyk.pwr.pzwmanager.service.OrderService;
-import org.szewczyk.pwr.pzwmanager.service.PersonService;
+import org.szewczyk.pwr.pzwmanager.service.*;
 
 import javax.annotation.Resource;
+import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.math.BigDecimal;
@@ -48,6 +46,15 @@ public class HomeController {
         return modelAndView;
     }
 
+    @Resource
+    private MailService mailService;
+    @RequestMapping(value = "/sendmail")
+    public String sendMail() throws MessagingException{
+        mailService.sendMail("psk1ne@wp.pl", "Testowy mail", "Testowa treść", false);
+        System.out.println("Wysłano!");
+        return "main";
+    }
+
     @RequestMapping(value = "/dodajTestoweDane")
     public ModelAndView addTestData(){
         ModelAndView modelAndView = new ModelAndView("main");
@@ -66,7 +73,7 @@ public class HomeController {
         return modelAndView;
     }
 
-    @GetMapping(value = "productList")
+    @GetMapping(value = "/productList")
     public ModelAndView showProductList(@RequestParam(value = "member") final boolean member){
         ModelAndView modelAndView = new ModelAndView();
         OrderItem orderItem = new OrderItem();
@@ -77,13 +84,13 @@ public class HomeController {
         return modelAndView;
     }
 
-    @GetMapping(value = "getOne")
+    @GetMapping(value = "/getOne")
     @ResponseBody
     public Item getOne(long id){
         return itemService.findById(id);
     }
 
-    @PostMapping(value = "addToCart")
+    @PostMapping(value = "/addToCart")
     public ModelAndView addToCart(OrderItem orderItem){
         personService.saveUser(orderItem.getPerson());
 
