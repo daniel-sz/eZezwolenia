@@ -30,8 +30,8 @@ public class MailService {
         helper.setSubject(subject);
         helper.setText(text, isHTMLObject);
 
-        FileSystemResource file = new FileSystemResource(new File("C:" + File.separator + "testy" + File.separator + "test.csv"));
-        helper.addAttachment("Potwierdzenie " + LocalDateTime.now().format(DateTimeFormatter.BASIC_ISO_DATE), file);
+//        FileSystemResource file = new FileSystemResource(new File("C:" + File.separator + "testy" + File.separator + "test.csv"));
+//        helper.addAttachment("Potwierdzenie " + LocalDateTime.now().format(DateTimeFormatter.BASIC_ISO_DATE), file);
         javaMailSender.send(mimeMessage);
     }
 }

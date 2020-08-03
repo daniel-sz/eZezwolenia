@@ -112,7 +112,7 @@ public class CartController {
             o.setStatus(Order.Status.SUCCESS);
             orderService.saveOrder(o);
             String mailAddress = o.getEmail();
-            String subject = "Potwierdzenie zamówienia " + o.getOrderNumber();
+            String subject = "Potwierdzenie zamówienia " + o.getOrderNumber() + " i płatności nr " + payuOrderId;
             String mailText =
             """
                 Witamy w serwisie e-Zezwolenia,
