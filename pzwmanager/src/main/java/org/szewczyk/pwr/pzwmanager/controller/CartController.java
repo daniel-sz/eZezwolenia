@@ -106,7 +106,7 @@ public class CartController {
         String payuOrderId = jsonResponse.getBody().getObject().getJSONArray("properties").getJSONObject(0).getString("value");
 
         if (status.equals("SUCCESS")){
-//            System.out.println("----- PAYMENT no. " + payuOrderId + " SUCCESS!!! -----");
+            System.out.println("----- PAYMENT no. " + payuOrderId + " SUCCESS!!! -----");
             Order o = orderService.findByOrderNum(orderNum);
             o.setStatus(Order.Status.SUCCESS);
             orderService.saveOrder(o);
@@ -128,7 +128,8 @@ public class CartController {
                 mailService.sendMail(mailAddress, subject, mailText, false);
                 System.out.println(" - Mail wysłany - ");
             } catch (MessagingException e) {
-                e.printStackTrace();
+                System.out.println(" - Wywaliło wyjątek - ");
+//                e.printStackTrace();
             }
         }
         modelAndView.addObject("item", jsonResponse.getBody());
