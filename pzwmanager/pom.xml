@@ -130,8 +130,8 @@
 				<configuration>
 					<source>14</source>
 					<target>14</target>
-					<fork>true</fork>
-					<executable>C:\java\jdk-14.0.1\bin\javac.exe</executable>
+<!--					<fork>true</fork>-->
+<!--					<executable>C:\java\jdk-14.0.1\bin\javac.exe</executable>-->
 					<compilerArgs>--enable-preview</compilerArgs>
 				</configuration>
 			</plugin>
