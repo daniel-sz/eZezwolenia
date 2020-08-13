@@ -110,6 +110,7 @@ public class CartController {
         if (order == null){
             return null;
         } else {
+            System.out.println("PayU Order ID: " + order.getPayuOrderId());
             HttpResponse<JsonNode> jsonResponse = Unirest.get(ORDER_URL + order.getPayuOrderId())
                     .header("Authorization", "Bearer " + token)
                     .asJson();
