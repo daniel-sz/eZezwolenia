@@ -3,11 +3,11 @@ package org.szewczyk.pwr.pzwmanager.controller;
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import kong.unirest.Unirest;
+import kong.unirest.json.JSONArray;
+import kong.unirest.json.JSONObject;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.servlet.ModelAndView;
 import org.szewczyk.pwr.pzwmanager.model.Cart;
@@ -18,7 +18,6 @@ import org.szewczyk.pwr.pzwmanager.service.OrderService;
 import org.szewczyk.pwr.pzwmanager.service.PDFService;
 
 import javax.annotation.Resource;
-import javax.mail.MessagingException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -102,61 +101,64 @@ public class CartController {
         return "redirect:";
     }
 
-    @PostMapping(value = "notify")
-    public ModelAndView orderStatus(@RequestParam(name = "orderId") String orderId){
-        String token = getToken();
-        Order order = orderService.findByOrderNum(orderId);
-        ModelAndView modelAndView = new ModelAndView();
-        if (order == null){
-            return null;
-        } else {
-            System.out.println("PayU Order ID: " + order.getPayuOrderId());
-            HttpResponse<JsonNode> jsonResponse = Unirest.get(ORDER_URL + order.getPayuOrderId())
-                    .header("Authorization", "Bearer " + token)
-                    .asJson();
-            String status = jsonResponse.getBody().getObject().getJSONObject("status").getString("statusCode");
-            System.out.println("STATUS: " + status);
-
-            String orderNum = jsonResponse.getBody().getObject().getJSONArray("orders").getJSONObject(0).getString("extOrderId");
-            String payuOrderId = jsonResponse.getBody().getObject().getJSONArray("properties").getJSONObject(0).getString("value");
-            System.out.println("Order num after payment: " + orderNum);
-
-            if (status.equals("SUCCESS")) {
-                System.out.println("----- PAYMENT no. " + payuOrderId + " SUCCESS!!! -----");
-                Order o = orderService.findByOrderNum(orderNum);
-                if (o != null && o.getStatus().equals(Order.Status.PENDING)) {
-                    o.setStatus(Order.Status.SUCCESS);
-                    orderService.saveOrder(o);
-//                PDF GEN
-
-
-//                EMAIL SENDING
-                    String mailAddress = o.getEmail();
-                    String subject = "Potwierdzenie zamowienia " + o.getOrderNumber() + " i platnosci nr " + payuOrderId;
-                    String mailText =
-                            """
-                                    Witamy w serwisie e-Zezwolenia,
-
-                                    W załączniku będzie znajdował się plik z potwierdzeniem zamowienia.
-                                    Zapraszamy z tym plikiem (w wersji elektronicznej lub wydrukowanej) do zarzadu PZW po odbior wymaganych naklejek.
-                                    Dziękujemy za skorzystanie z naszych uslug.
-
-                                    Pozdrawiam
-                                    Twórca tego przybytku,
-                                    Daniel Szewczyk""";
-                    try {
-                        mailService.sendMail(mailAddress, subject, mailText, false);
-                        System.out.println(" - Mail wysłany - ");
-                    } catch (MessagingException e) {
-                        System.out.println(" - Wyjątek podczas wysyłania maila - ");
-//                e.printStackTrace();
-                    }
-                }
-            }
-            modelAndView.addObject("item", jsonResponse.getBody());
-            modelAndView.setViewName("finalizeOrder");
-            return modelAndView;
-        }
+    @RequestMapping(value = "notify")
+//    @Async
+    public void orderStatus(JSONObject object){
+//        String token = getToken();
+        System.out.println("Notify recieved!");
+        System.out.println("Object: " + object.toString());
+//        Order order = orderService.findByOrderNum(orderId);
+//        ModelAndView modelAndView = new ModelAndView();
+//        if (order == null){
+//            return null;
+//        } else {
+//            System.out.println("PayU Order ID: " + order.getPayuOrderId());
+//            HttpResponse<JsonNode> jsonResponse = Unirest.get(ORDER_URL + order.getPayuOrderId())
+//                    .header("Authorization", "Bearer " + token)
+//                    .asJson();
+//            String status = jsonResponse.getBody().getObject().getJSONObject("status").getString("statusCode");
+//            System.out.println("STATUS: " + status);
+//
+//            String orderNum = jsonResponse.getBody().getObject().getJSONArray("orders").getJSONObject(0).getString("extOrderId");
+//            String payuOrderId = jsonResponse.getBody().getObject().getJSONArray("properties").getJSONObject(0).getString("value");
+//            System.out.println("Order num after payment: " + orderNum);
+//
+//            if (status.equals("SUCCESS")) {
+//                System.out.println("----- PAYMENT no. " + payuOrderId + " SUCCESS!!! -----");
+//                Order o = orderService.findByOrderNum(orderNum);
+//                if (o != null && o.getStatus().equals(Order.Status.PENDING)) {
+//                    o.setStatus(Order.Status.SUCCESS);
+//                    orderService.saveOrder(o);
+////                PDF GEN
+//
+//
+////                EMAIL SENDING
+//                    String mailAddress = o.getEmail();
+//                    String subject = "Potwierdzenie zamowienia " + o.getOrderNumber() + " i platnosci nr " + payuOrderId;
+//                    String mailText =
+//                            """
+//                                    Witamy w serwisie e-Zezwolenia,
+//
+//                                    W załączniku będzie znajdował się plik z potwierdzeniem zamowienia.
+//                                    Zapraszamy z tym plikiem (w wersji elektronicznej lub wydrukowanej) do zarzadu PZW po odbior wymaganych naklejek.
+//                                    Dziękujemy za skorzystanie z naszych uslug.
+//
+//                                    Pozdrawiam
+//                                    Twórca tego przybytku,
+//                                    Daniel Szewczyk""";
+//                    try {
+//                        mailService.sendMail(mailAddress, subject, mailText, false);
+//                        System.out.println(" - Mail wysłany - ");
+//                    } catch (MessagingException e) {
+//                        System.out.println(" - Wyjątek podczas wysyłania maila - ");
+////                e.printStackTrace();
+//                    }
+//                }
+//            }
+//            modelAndView.addObject("item", jsonResponse.getBody());
+//            modelAndView.setViewName("finalizeOrder");
+//            return modelAndView;
+//        }
     }
 
     private String getToken(){
@@ -169,29 +171,37 @@ public class CartController {
         return jsonResponse.getBody().getObject().getString("access_token");
     }
     private Map<String, String> createPayUOrder(Order order, String token){
+//        JSON PAYLOAD
+        JSONObject payload = new JSONObject();
+        payload.put("notifyUrl", "https://e-zezwolenia.herokuapp.com/cart/notify?orderId=" + order.getOrderNumber());
+        payload.put("customerIp", "127.0.0.1");
+        payload.put("merchantPosId", CLIENT_ID);
+        payload.put("description", "Platnosc za pozwolenie");
+        payload.put("currencyCode", "PLN");
+        payload.put("totalAmount", order.getValue().movePointRight(2).toString());
+        payload.put("extOrderId", order.getOrderNumber());
+            JSONObject buyer = new JSONObject();
+            buyer.put("email", order.getEmail());
+            buyer.put("firstName", order.getOrderItems().get(order.getOrderItems().size() - 1).getPerson().getFirstName());
+            buyer.put("lastName", order.getOrderItems().get(order.getOrderItems().size() - 1).getPerson().getLastName());
+        payload.put("buyer", buyer);
+                JSONObject product1 = new JSONObject();
+                product1.put("name", "Zamowienie nr " + order.getOrderNumber());
+                product1.put("unitPrice", order.getValue().movePointRight(2).toString());
+                product1.put("quantity", 1);
+            JSONArray products = new JSONArray();
+            products.put(product1);
+        payload.put("products", products);
+
         CompletableFuture<HttpResponse<JsonNode>> jsonResponse = Unirest.post(ORDER_URL)
                 .header("Content-Type", "application/json")
                 .header("Authorization", "Bearer " + token)
-                .body("{\"notifyUrl\": \"https://e-zezwolenia.herokuapp.com/cart/notify?orderId=" + order.getOrderNumber() + "\", " +
-                        "\"customerIp\": \"127.0.0.1\", " +
-                        "\"merchantPosId\": \"" + CLIENT_ID + "\", " +
-                        "\"description\": \"Platnosc za pozwolenie\", " +
-                        "\"currencyCode\": \"PLN\", " +
-                        "\"totalAmount\": \"" + order.getValue().movePointRight(2).toString() + "\", " +
-                        "\"extOrderId\": \"" + order.getOrderNumber() + "\", " +
-                        "\"buyer\": {" +
-                            "\"email\": \"" + order.getEmail() + "\", " +
-                            "\"firstName\": \"" + order.getOrderItems().get(order.getOrderItems().size() - 1).getPerson().getFirstName() + "\", " +
-                            "\"lastName\": \"" + order.getOrderItems().get(order.getOrderItems().size() - 1).getPerson().getLastName() + "\" }," +
-                        "\"products\": [{" +
-                            "\"name\": \"Zamowienie nr " + order.getOrderNumber() + "\", " +
-                            "\"unitPrice\": \"" + order.getValue().movePointRight(2).toString() + "\", " +
-                            "\"quantity\": \"1\"}]}")
+                .body(payload)
                 .asJsonAsync(httpResponse -> {
                     int code = httpResponse.getStatus();
                     JsonNode body = httpResponse.getBody();
-//                    System.out.println("Code: " + code);
-//                    System.out.println("Body: " + body);
+                    System.out.println("Code: " + code);
+                    System.out.println("Body: " + body);
                 });
 
         Map<String, String> orderDetails = new HashMap<>();
