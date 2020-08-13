@@ -79,6 +79,7 @@ public class CartController {
         order.setOrderNumber();
         order.setStatus(Order.Status.PENDING);
         orderService.saveOrder(order);
+        System.out.println("Order number before creating payment: " + order.getOrderNumber());
 
 //        ------------ CLEAR CART
         cart.getOrderedItems().clear();
@@ -106,48 +107,53 @@ public class CartController {
         String token = getToken();
         Order order = orderService.findByOrderNum(orderId);
         ModelAndView modelAndView = new ModelAndView();
-        HttpResponse<JsonNode> jsonResponse = Unirest.get(ORDER_URL + order.getPayuOrderId())
-                .header("Authorization", "Bearer " + token)
-                .asJson();
-        String status = jsonResponse.getBody().getObject().getJSONObject("status").getString("statusCode");
-        String orderNum = jsonResponse.getBody().getObject().getJSONArray("orders").getJSONObject(0).getString("extOrderId");
-        String payuOrderId = jsonResponse.getBody().getObject().getJSONArray("properties").getJSONObject(0).getString("value");
+        if (order == null){
+            return null;
+        } else {
+            HttpResponse<JsonNode> jsonResponse = Unirest.get(ORDER_URL + order.getPayuOrderId())
+                    .header("Authorization", "Bearer " + token)
+                    .asJson();
+            String status = jsonResponse.getBody().getObject().getJSONObject("status").getString("statusCode");
+            String orderNum = jsonResponse.getBody().getObject().getJSONArray("orders").getJSONObject(0).getString("extOrderId");
+            String payuOrderId = jsonResponse.getBody().getObject().getJSONArray("properties").getJSONObject(0).getString("value");
+            System.out.println("Order num after payment: " + orderNum);
 
-        if (status.equals("SUCCESS")){
-            System.out.println("----- PAYMENT no. " + payuOrderId + " SUCCESS!!! -----");
-            Order o = orderService.findByOrderNum(orderNum);
-            if (o != null && o.getStatus().equals(Order.Status.PENDING)){
-                o.setStatus(Order.Status.SUCCESS);
-                orderService.saveOrder(o);
+            if (status.equals("SUCCESS")) {
+                System.out.println("----- PAYMENT no. " + payuOrderId + " SUCCESS!!! -----");
+                Order o = orderService.findByOrderNum(orderNum);
+                if (o != null && o.getStatus().equals(Order.Status.PENDING)) {
+                    o.setStatus(Order.Status.SUCCESS);
+                    orderService.saveOrder(o);
 //                PDF GEN
 
 
 //                EMAIL SENDING
-                String mailAddress = o.getEmail();
-                String subject = "Potwierdzenie zamowienia " + o.getOrderNumber() + " i platnosci nr " + payuOrderId;
-                String mailText =
-                        """
-                                Witamy w serwisie e-Zezwolenia,
+                    String mailAddress = o.getEmail();
+                    String subject = "Potwierdzenie zamowienia " + o.getOrderNumber() + " i platnosci nr " + payuOrderId;
+                    String mailText =
+                            """
+                                    Witamy w serwisie e-Zezwolenia,
 
-                                W załączniku będzie znajdował się plik z potwierdzeniem zamowienia.
-                                Zapraszamy z tym plikiem (w wersji elektronicznej lub wydrukowanej) do zarzadu PZW po odbior wymaganych naklejek.
-                                Dziękujemy za skorzystanie z naszych uslug.
+                                    W załączniku będzie znajdował się plik z potwierdzeniem zamowienia.
+                                    Zapraszamy z tym plikiem (w wersji elektronicznej lub wydrukowanej) do zarzadu PZW po odbior wymaganych naklejek.
+                                    Dziękujemy za skorzystanie z naszych uslug.
 
-                                Pozdrawiam
-                                Twórca tego przybytku,
-                                Daniel Szewczyk""";
-                try {
-                    mailService.sendMail(mailAddress, subject, mailText, false);
-                    System.out.println(" - Mail wysłany - ");
-                } catch (MessagingException e) {
-                    System.out.println(" - Wyjątek podczas wysyłania maila - ");
+                                    Pozdrawiam
+                                    Twórca tego przybytku,
+                                    Daniel Szewczyk""";
+                    try {
+                        mailService.sendMail(mailAddress, subject, mailText, false);
+                        System.out.println(" - Mail wysłany - ");
+                    } catch (MessagingException e) {
+                        System.out.println(" - Wyjątek podczas wysyłania maila - ");
 //                e.printStackTrace();
+                    }
                 }
             }
+            modelAndView.addObject("item", jsonResponse.getBody());
+            modelAndView.setViewName("finalizeOrder");
+            return modelAndView;
         }
-        modelAndView.addObject("item", jsonResponse.getBody());
-        modelAndView.setViewName("finalizeOrder");
-        return modelAndView;
     }
 
     private String getToken(){
