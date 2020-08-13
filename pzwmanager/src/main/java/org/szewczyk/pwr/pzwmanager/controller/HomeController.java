@@ -11,8 +11,8 @@ import org.szewczyk.pwr.pzwmanager.model.OrderItem;
 import org.szewczyk.pwr.pzwmanager.service.*;
 
 import javax.annotation.Resource;
-import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -46,11 +46,19 @@ public class HomeController {
     }
 
     @Resource
-    private MailService mailService;
-    @RequestMapping(value = "/sendmail")
-    public String sendMail() throws MessagingException{
-//        mailService.sendMail("psk1ne@wp.pl", "Testowy mail", "Testowa treść", false);
-//        System.out.println("Wysłano!");
+    private PDFService pdfService;
+    @RequestMapping(value = "/createPDF")
+    public String createPDF() throws IOException {
+        Order o = new Order();
+        o.setDate(LocalDateTime.now().toString());
+        o.setEmail("danielszewczy@gmail.com");
+        o.setId(1L);
+        o.setOrderNumber("PZW/Kud/2020/08/sdffdsnfjinfjs");
+        o.setPayuOrderId("5000012345");
+        o.setStatus(Order.Status.SUCCESS);
+        o.setValue(BigDecimal.valueOf(20.00));
+
+        pdfService.createOrderConfirmation(o);
         return "main";
     }
 

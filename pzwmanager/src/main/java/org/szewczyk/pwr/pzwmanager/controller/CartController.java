@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.servlet.ModelAndView;
 import org.szewczyk.pwr.pzwmanager.model.Cart;
@@ -14,10 +15,11 @@ import org.szewczyk.pwr.pzwmanager.model.Order;
 import org.szewczyk.pwr.pzwmanager.service.CartService;
 import org.szewczyk.pwr.pzwmanager.service.MailService;
 import org.szewczyk.pwr.pzwmanager.service.OrderService;
+import org.szewczyk.pwr.pzwmanager.service.PDFService;
 
 import javax.annotation.Resource;
 import javax.mail.MessagingException;
-import java.io.File;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -34,6 +36,9 @@ public class CartController {
     private OrderService orderService;
     @Resource
     private MailService mailService;
+    @Resource
+    private PDFService pdfService;
+
 
     final String CLIENT_ID = "391607";
     final String CLIENT_SECRET = "7ed04dd6f7ff71a7b5f010b759b575d0";
@@ -77,6 +82,12 @@ public class CartController {
         cart.getOrderedItems().clear();
         cartService.deleteCart(cart);
 
+        try {
+            pdfService.createOrderConfirmation(order);
+        } catch (IOException e) {
+            System.out.println(" - Błąd przy generacji potwierdzenia! - ");
+//                    e.printStackTrace();
+        }
 
         String accessToken = getToken();        // get PayU Oauth2 token
         Map<String, String> response = createPayUOrder(order, accessToken);
@@ -95,10 +106,10 @@ public class CartController {
     }
 
     @PostMapping(value = "notify")
-    public ModelAndView orderStatus(){
+    public ModelAndView orderStatus(@RequestParam(name = "orderId") String orderId){
         String token = getToken();
         ModelAndView modelAndView = new ModelAndView();
-        HttpResponse<JsonNode> jsonResponse = Unirest.get(ORDER_URL + orderService.findAll().get(orderService.findAll().size() - 1).getPayuOrderId())
+        HttpResponse<JsonNode> jsonResponse = Unirest.get(ORDER_URL + orderService.findByOrderNum(orderId))
                 .header("Authorization", "Bearer " + token)
                 .asJson();
         String status = jsonResponse.getBody().getObject().getJSONObject("status").getString("statusCode");
@@ -106,12 +117,15 @@ public class CartController {
         String payuOrderId = jsonResponse.getBody().getObject().getJSONArray("properties").getJSONObject(0).getString("value");
 
         if (status.equals("SUCCESS")){
-//            System.out.println("----- PAYMENT no. " + payuOrderId + " SUCCESS!!! -----");
+            System.out.println("----- PAYMENT no. " + payuOrderId + " SUCCESS!!! -----");
             Order o = orderService.findByOrderNum(orderNum);
             if (o != null && o.getStatus().equals(Order.Status.PENDING)){
                 o.setStatus(Order.Status.SUCCESS);
                 orderService.saveOrder(o);
-                pdfInvoiceGenerator(o);
+//                PDF GEN
+
+
+//                EMAIL SENDING
                 String mailAddress = o.getEmail();
                 String subject = "Potwierdzenie zamowienia " + o.getOrderNumber() + " i platnosci nr " + payuOrderId;
                 String mailText =
@@ -152,7 +166,7 @@ public class CartController {
         CompletableFuture<HttpResponse<JsonNode>> jsonResponse = Unirest.post(ORDER_URL)
                 .header("Content-Type", "application/json")
                 .header("Authorization", "Bearer " + token)
-                .body("{\"notifyUrl\": \"https://e-zezwolenia.herokuapp.com/cart/notify\", " +
+                .body("{\"notifyUrl\": \"https://e-zezwolenia.herokuapp.com/cart/notify?orderId=" + order.getId() + "\", " +
                         "\"customerIp\": \"127.0.0.1\", " +
                         "\"merchantPosId\": \"" + CLIENT_ID + "\", " +
                         "\"description\": \"Platnosc za pozwolenie\", " +
@@ -186,17 +200,6 @@ public class CartController {
             orderDetails.put("orderId", "null");
         }
         return orderDetails;
-    }
-
-
-    private void pdfInvoiceGenerator(Order order){
-        File workingDir = new File("." + File.separator + "Invoices");
-        if (!workingDir.exists() && !workingDir.isDirectory()) workingDir.mkdirs();
-
-        File template = new File(workingDir + File.separator + "template.tex");
-        File tempDir = new File(workingDir.getAbsolutePath() + File.separator + "temp");
-        if (!tempDir.isDirectory()) tempDir.mkdir();
-        File invoice = new File(tempDir.getAbsolutePath() + File.separator + "invoice.tex");
     }
 }
 
