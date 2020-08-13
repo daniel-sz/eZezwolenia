@@ -106,7 +106,7 @@ public class CartController {
         String token = getToken();
         Order order = orderService.findByOrderNum(orderId);
         ModelAndView modelAndView = new ModelAndView();
-        HttpResponse<JsonNode> jsonResponse = Unirest.get(ORDER_URL)
+        HttpResponse<JsonNode> jsonResponse = Unirest.get(ORDER_URL + order.getPayuOrderId())
                 .header("Authorization", "Bearer " + token)
                 .asJson();
         String status = jsonResponse.getBody().getObject().getJSONObject("status").getString("statusCode");
