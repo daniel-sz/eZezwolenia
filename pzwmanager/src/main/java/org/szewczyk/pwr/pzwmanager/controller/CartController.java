@@ -19,8 +19,7 @@ import org.szewczyk.pwr.pzwmanager.service.PDFService;
 
 import javax.annotation.Resource;
 import javax.mail.MessagingException;
-import java.io.IOException;
-import java.time.LocalDate;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
@@ -69,34 +68,31 @@ public class CartController {
 
     @RequestMapping(value = "finalizeOrder")
     public String finalizeOrder(Order order){
+//        ------------ FIND USER'S CART
         String currentSessionId = RequestContextHolder.currentRequestAttributes().getSessionId();
         Cart cart = cartService.findBySessionId(currentSessionId);
 
+//        ------------ SET ORDER DETAILS
         order.setDate(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd,HH:mm:ss.AAA")));
         order.getOrderItems().addAll(cart.getOrderedItems());
         order.setValue(cart.getSumPrice());
         order.setOrderNumber();
-        order.setDate(LocalDate.now().format(DateTimeFormatter.ISO_DATE));
         order.setStatus(Order.Status.PENDING);
+        orderService.saveOrder(order);
 
+//        ------------ CLEAR CART
         cart.getOrderedItems().clear();
+        cart.setSumPrice(BigDecimal.ZERO);
         cartService.deleteCart(cart);
 
-        try {
-            pdfService.createOrderConfirmation(order);
-        } catch (IOException e) {
-            System.out.println(" - Błąd przy generacji potwierdzenia! - ");
-//                    e.printStackTrace();
-        }
-
+//        ------------ CREATE PAYMENT
         String accessToken = getToken();        // get PayU Oauth2 token
         Map<String, String> response = createPayUOrder(order, accessToken);
         String redirectAddress = response.get("redirectUri");    // create PayU order
-//        System.out.println("LOG -------------> ExtOrderId: " + order.getOrderNumber());
-//        System.out.println("LOG -------------> TOKEN: " + accessToken);
-//        System.out.println("LOG -------------> OrderID: " + response.get("orderId"));
-        order.setPayuOrderId(response.get("orderId"));
-        orderService.saveOrder(order);
+
+//        ------------ UPDATE ORDER DETAILS
+//        order.setPayuOrderId(response.get("orderId"));
+//        orderService.saveOrder(order);
 
         if (redirectAddress != null){
             return ("redirect:" + redirectAddress);
@@ -108,8 +104,9 @@ public class CartController {
     @PostMapping(value = "notify")
     public ModelAndView orderStatus(@RequestParam(name = "orderId") String orderId){
         String token = getToken();
+        Order order = orderService.findByOrderNum(orderId);
         ModelAndView modelAndView = new ModelAndView();
-        HttpResponse<JsonNode> jsonResponse = Unirest.get(ORDER_URL + orderService.findByOrderNum(orderId))
+        HttpResponse<JsonNode> jsonResponse = Unirest.get(ORDER_URL)
                 .header("Authorization", "Bearer " + token)
                 .asJson();
         String status = jsonResponse.getBody().getObject().getJSONObject("status").getString("statusCode");
@@ -166,7 +163,7 @@ public class CartController {
         CompletableFuture<HttpResponse<JsonNode>> jsonResponse = Unirest.post(ORDER_URL)
                 .header("Content-Type", "application/json")
                 .header("Authorization", "Bearer " + token)
-                .body("{\"notifyUrl\": \"https://e-zezwolenia.herokuapp.com/cart/notify?orderId=" + order.getId() + "\", " +
+                .body("{\"notifyUrl\": \"https://e-zezwolenia.herokuapp.com/cart/notify?orderId=" + order.getOrderNumber() + "\", " +
                         "\"customerIp\": \"127.0.0.1\", " +
                         "\"merchantPosId\": \"" + CLIENT_ID + "\", " +
                         "\"description\": \"Platnosc za pozwolenie\", " +
@@ -175,7 +172,6 @@ public class CartController {
                         "\"extOrderId\": \"" + order.getOrderNumber() + "\", " +
                         "\"buyer\": {" +
                             "\"email\": \"" + order.getEmail() + "\", " +
-//                            "\"phone\": \"654111654\", " +
                             "\"firstName\": \"" + order.getOrderItems().get(order.getOrderItems().size() - 1).getPerson().getFirstName() + "\", " +
                             "\"lastName\": \"" + order.getOrderItems().get(order.getOrderItems().size() - 1).getPerson().getLastName() + "\" }," +
                         "\"products\": [{" +
@@ -191,7 +187,7 @@ public class CartController {
 
         Map<String, String> orderDetails = new HashMap<>();
         try {
-            System.out.println(jsonResponse.get().getBody().getObject().toString());
+//            System.out.println(jsonResponse.get().getBody().getObject().toString());
             orderDetails.put("redirectUri", jsonResponse.get().getBody().getObject().getString("redirectUri"));
             orderDetails.put("orderId", jsonResponse.get().getBody().getObject().getString("orderId"));
         } catch (Exception e){

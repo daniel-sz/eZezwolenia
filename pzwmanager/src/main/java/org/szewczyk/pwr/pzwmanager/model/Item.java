@@ -5,9 +5,7 @@ import lombok.Data;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
-import java.time.LocalDate;
 
 @Data
 @Entity
@@ -48,7 +46,7 @@ public class Item {
     @NotBlank(message = "Proszę uzupełnić wszystkie pola")
     private BigDecimal price7days;
 
-    @Column(name = "price365")
+    @Column(name = "price_365")
     @NotBlank(message = "Proszę uzupełnić wszystkie pola")
     private BigDecimal price1year;
 
