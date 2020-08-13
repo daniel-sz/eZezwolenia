@@ -115,6 +115,8 @@ public class CartController {
                     .header("Authorization", "Bearer " + token)
                     .asJson();
             String status = jsonResponse.getBody().getObject().getJSONObject("status").getString("statusCode");
+            System.out.println("STATUS: " + status);
+            
             String orderNum = jsonResponse.getBody().getObject().getJSONArray("orders").getJSONObject(0).getString("extOrderId");
             String payuOrderId = jsonResponse.getBody().getObject().getJSONArray("properties").getJSONObject(0).getString("value");
             System.out.println("Order num after payment: " + orderNum);
