@@ -104,11 +104,16 @@ public class CartController {
 
     @PostMapping(value = "notify")
 //    @Async
-    public void orderStatus(HttpResponse<JsonNode> response){
+    public String orderStatus(HttpResponse<JsonNode> response){
 //        String token = getToken();
-        System.out.println("Notify recieved!");
-        System.out.println("Response headers: " + response.getHeaders());
-        System.out.println("Response body: " + response.getBody());
+        try {
+            System.out.println("Notify recieved!");
+            System.out.println("Response headers: " + response.getHeaders());
+            System.out.println("Response body: " + response.getBody());
+        }catch (Exception e){
+            
+        }
+        return null;
 //        Order order = orderService.findByOrderNum(orderId);
 //        ModelAndView modelAndView = new ModelAndView();
 //        if (order == null){
