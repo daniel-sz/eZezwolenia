@@ -7,6 +7,7 @@ import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONObject;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.servlet.ModelAndView;
@@ -101,12 +102,13 @@ public class CartController {
         return "redirect:";
     }
 
-    @RequestMapping(value = "notify")
+    @PostMapping(value = "notify")
 //    @Async
-    public void orderStatus(JSONObject object){
+    public void orderStatus(HttpResponse<JsonNode> response){
 //        String token = getToken();
         System.out.println("Notify recieved!");
-        System.out.println("Object: " + object.toString());
+        System.out.println("Response headers: " + response.getHeaders());
+        System.out.println("Response body: " + response.getBody());
 //        Order order = orderService.findByOrderNum(orderId);
 //        ModelAndView modelAndView = new ModelAndView();
 //        if (order == null){
