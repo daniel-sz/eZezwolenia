@@ -154,7 +154,7 @@ public class CartController {
                                     Twórca tego przybytku,
                                     Daniel Szewczyk""";
                     try {
-                        mailService.sendMail(mailAddress, subject, mailText, false);
+                        mailService.sendMail(mailAddress, subject, mailText, false, o);
                         System.out.println(" - Mail wysłany - ");
                     } catch (MessagingException e) {
                         System.out.println(" - Wyjątek podczas wysyłania maila - ");

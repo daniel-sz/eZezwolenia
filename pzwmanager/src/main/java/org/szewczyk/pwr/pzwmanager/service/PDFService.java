@@ -10,6 +10,7 @@ import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import org.apache.pdfbox.util.Matrix;
 import org.springframework.stereotype.Service;
 import org.szewczyk.pwr.pzwmanager.model.Order;
+import org.szewczyk.pwr.pzwmanager.model.OrderItem;
 import org.vandeseer.easytable.TableDrawer;
 import org.vandeseer.easytable.settings.BorderStyle;
 import org.vandeseer.easytable.structure.Row;
@@ -23,7 +24,7 @@ import java.io.IOException;
 
 @Service
 public class PDFService {
-    public void createOrderConfirmation(Order order) throws IOException {
+    public PDDocument createOrderConfirmation(Order order) throws IOException {
         PDDocument document = new PDDocument();
         PDPage page1 = new PDPage(PDRectangle.A4);
         document.addPage(page1);
@@ -59,41 +60,40 @@ public class PDFService {
         contentStream.lineTo(500, 480);
         contentStream.stroke();
 
-        Table myTable = Table.builder()
+        final Table.TableBuilder tableBuilder = Table.builder()
                 .addColumnsOfWidth(470, 70)
+                .fontSize(12)
                 .padding(8)
-                .addRow(Row.builder()
-                        .add(TextCell.builder().text("Typ pozwolenia").build())
-                        .add(TextCell.builder().text("Koszt").build())
-                        .font(font)
-                        .fontSize(12)
-                        .backgroundColor(new Color(240,240,240))
-                        .borderStyle(BorderStyle.SOLID)
-                        .borderColor(new Color(150,150,150))
-                        .borderWidth(0.5f)
-                        .build())
-                .addRow(Row.builder()
-                        .add(TextCell.builder().text("Test 123").build())
-                        .add(TextCell.builder().text("25.00").build())
-                        .font(font)
-                        .fontSize(12)
-                        .borderStyle(BorderStyle.SOLID)
-                        .borderColor(new Color(150,150,150))
-                        .borderWidth(0.5f)
-                        .build())
-                .build();
+                .font(font)
+                .borderStyle(BorderStyle.SOLID)
+                .borderColor(new Color(150, 150, 150))
+                .borderWidth(0.5f);
+
+        tableBuilder.addRow(Row.builder()
+                .add(TextCell.builder().text("Typ pozwolenia").build())
+                .add(TextCell.builder().text("Koszt").build())
+                .backgroundColor(new Color(240,240,240))
+                .build());
+
+        for (OrderItem item: order.getOrderItems()){
+            tableBuilder.addRow(Row.builder()
+                    .add(TextCell.builder().text(item.getItem().getName()).build())
+                    .add(TextCell.builder().text(item.getPrice().toString()).build())
+                    .build());
+        }
+
         TableDrawer tableDrawer = TableDrawer.builder()
                 .contentStream(contentStream)
                 .startX(25)
                 .startY(420)
-                .table(myTable)
+                .table(tableBuilder.build())
                 .build();
 
         tableDrawer.draw();
 
         contentStream.setFont(font, 12);
         contentStream.beginText();
-        contentStream.newLineAtOffset(25, 350);
+        contentStream.newLineAtOffset(25, tableDrawer.getFinalY() - 25);
 //        contentStream.showText("Nr zamówienia: " + order.getOrderNumber());
 //        contentStream.newLine();
         contentStream.showText("ID PayU: " + order.getPayuOrderId());
@@ -102,9 +102,7 @@ public class PDFService {
         contentStream.close();
 
 
-        document.save(new File("C:" + File.separator + "testy" + File.separator + "test_doc.pdf"));
-        System.out.println("PDF saved");
-        document.close();
+        return document;
     }
 
     private void addCenteredText(String text, PDFont font, int fontSize, PDPageContentStream stream, PDPage page, Point2D.Float offset) throws IOException{
