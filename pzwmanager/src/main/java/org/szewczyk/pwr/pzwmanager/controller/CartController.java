@@ -1,6 +1,5 @@
 package org.szewczyk.pwr.pzwmanager.controller;
 
-import kong.unirest.HttpRequest;
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import kong.unirest.Unirest;
@@ -105,13 +104,11 @@ public class CartController {
 
     @PostMapping(value = "notify")
 //    @Async
-    public String orderStatus(HttpRequest response){
-//        String token = getToken();
+    public String orderStatus(JSONObject response){
         try {
             System.out.println("Notify recieved!");
-            System.out.println("Response headers: " + response.getHeaders());
-            System.out.println("Response body: " + response.getBody());
-        }catch (Exception e){
+            System.out.println("Response body: " + response);
+        }catch (Exception ignored){
 
         }
         return null;
