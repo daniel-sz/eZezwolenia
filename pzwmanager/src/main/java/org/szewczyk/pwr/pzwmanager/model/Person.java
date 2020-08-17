@@ -30,4 +30,11 @@ public class Person {
 
     @Column(name = "club_name")
     private String clubName;
+
+    @Override
+    public String toString() {
+        return "Imię i nazwisko: " + firstName + lastName +
+                ", Nr karty wędkarskiej: " + cardNumber +
+                ", Koło PZW: " + clubName;
+    }
 }

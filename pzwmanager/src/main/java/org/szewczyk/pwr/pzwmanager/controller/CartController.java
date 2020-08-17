@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.servlet.ModelAndView;
 import org.szewczyk.pwr.pzwmanager.model.Cart;
@@ -19,6 +20,7 @@ import org.szewczyk.pwr.pzwmanager.service.OrderService;
 import org.szewczyk.pwr.pzwmanager.service.PDFService;
 
 import javax.annotation.Resource;
+import javax.mail.MessagingException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -102,68 +104,69 @@ public class CartController {
         return "redirect:";
     }
 
-    @PostMapping(value = "notify")
+    @PostMapping(value = "orderDetails")
 //    @Async
-    public String orderStatus(JSONObject response){
-        try {
-            System.out.println("Notify recieved!");
-            System.out.println("Response body: " + response);
-        }catch (Exception ignored){
-
-        }
-        return null;
-//        Order order = orderService.findByOrderNum(orderId);
-//        ModelAndView modelAndView = new ModelAndView();
-//        if (order == null){
-//            return null;
-//        } else {
-//            System.out.println("PayU Order ID: " + order.getPayuOrderId());
-//            HttpResponse<JsonNode> jsonResponse = Unirest.get(ORDER_URL + order.getPayuOrderId())
-//                    .header("Authorization", "Bearer " + token)
-//                    .asJson();
-//            String status = jsonResponse.getBody().getObject().getJSONObject("status").getString("statusCode");
-//            System.out.println("STATUS: " + status);
+    public ModelAndView orderStatus(@RequestParam String orderId){
+//        try {
+//            System.out.println("Notify recieved!");
+//            System.out.println("Response body: " + response);
+//        }catch (Exception ignored){
 //
-//            String orderNum = jsonResponse.getBody().getObject().getJSONArray("orders").getJSONObject(0).getString("extOrderId");
-//            String payuOrderId = jsonResponse.getBody().getObject().getJSONArray("properties").getJSONObject(0).getString("value");
-//            System.out.println("Order num after payment: " + orderNum);
-//
-//            if (status.equals("SUCCESS")) {
-//                System.out.println("----- PAYMENT no. " + payuOrderId + " SUCCESS!!! -----");
-//                Order o = orderService.findByOrderNum(orderNum);
-//                if (o != null && o.getStatus().equals(Order.Status.PENDING)) {
-//                    o.setStatus(Order.Status.SUCCESS);
-//                    orderService.saveOrder(o);
-////                PDF GEN
-//
-//
-////                EMAIL SENDING
-//                    String mailAddress = o.getEmail();
-//                    String subject = "Potwierdzenie zamowienia " + o.getOrderNumber() + " i platnosci nr " + payuOrderId;
-//                    String mailText =
-//                            """
-//                                    Witamy w serwisie e-Zezwolenia,
-//
-//                                    W załączniku będzie znajdował się plik z potwierdzeniem zamowienia.
-//                                    Zapraszamy z tym plikiem (w wersji elektronicznej lub wydrukowanej) do zarzadu PZW po odbior wymaganych naklejek.
-//                                    Dziękujemy za skorzystanie z naszych uslug.
-//
-//                                    Pozdrawiam
-//                                    Twórca tego przybytku,
-//                                    Daniel Szewczyk""";
-//                    try {
-//                        mailService.sendMail(mailAddress, subject, mailText, false);
-//                        System.out.println(" - Mail wysłany - ");
-//                    } catch (MessagingException e) {
-//                        System.out.println(" - Wyjątek podczas wysyłania maila - ");
-////                e.printStackTrace();
-//                    }
-//                }
-//            }
-//            modelAndView.addObject("item", jsonResponse.getBody());
-//            modelAndView.setViewName("finalizeOrder");
-//            return modelAndView;
 //        }
+//        return null;
+        String token = getToken();
+        Order order = orderService.findByOrderNum(orderId);
+        ModelAndView modelAndView = new ModelAndView();
+        if (order == null){
+            return null;
+        } else {
+            System.out.println("PayU Order ID: " + order.getPayuOrderId());
+            HttpResponse<JsonNode> jsonResponse = Unirest.get(ORDER_URL + order.getPayuOrderId())
+                    .header("Authorization", "Bearer " + token)
+                    .asJson();
+            String status = jsonResponse.getBody().getObject().getJSONArray("orders").getJSONObject(0).getString("status");
+            System.out.println("STATUS: " + status);
+
+            String orderNum = jsonResponse.getBody().getObject().getJSONArray("orders").getJSONObject(0).getString("extOrderId");
+            String payuOrderId = jsonResponse.getBody().getObject().getJSONArray("properties").getJSONObject(0).getString("value");
+            System.out.println("Order num after payment: " + orderNum);
+
+            if (status.equals("COMPLETED")) {
+                System.out.println("----- PAYMENT no. " + payuOrderId + " SUCCESS!!! -----");
+                Order o = orderService.findByOrderNum(orderNum);
+                if (o != null && o.getStatus().equals(Order.Status.PENDING)) {
+                    o.setStatus(Order.Status.SUCCESS);
+                    orderService.saveOrder(o);
+//                PDF GEN
+
+
+//                EMAIL SENDING
+                    String mailAddress = o.getEmail();
+                    String subject = "Potwierdzenie zamowienia " + o.getOrderNumber() + " i platnosci nr " + payuOrderId;
+                    String mailText =
+                            """
+                                    Witamy w serwisie e-Zezwolenia,
+
+                                    W załączniku będzie znajdował się plik z potwierdzeniem zamowienia.
+                                    Zapraszamy z tym plikiem (w wersji elektronicznej lub wydrukowanej) do zarzadu PZW po odbior wymaganych naklejek.
+                                    Dziękujemy za skorzystanie z naszych uslug.
+
+                                    Pozdrawiam
+                                    Twórca tego przybytku,
+                                    Daniel Szewczyk""";
+                    try {
+                        mailService.sendMail(mailAddress, subject, mailText, false);
+                        System.out.println(" - Mail wysłany - ");
+                    } catch (MessagingException e) {
+                        System.out.println(" - Wyjątek podczas wysyłania maila - ");
+//                e.printStackTrace();
+                    }
+                }
+            }
+            modelAndView.addObject("item", jsonResponse.getBody());
+            modelAndView.setViewName("finalizeOrder");
+            return modelAndView;
+        }
     }
 
     private String getToken(){
@@ -178,7 +181,8 @@ public class CartController {
     private Map<String, String> createPayUOrder(Order order, String token){
 //        JSON PAYLOAD
         JSONObject payload = new JSONObject();
-        payload.put("notifyUrl", "https://e-zezwolenia.herokuapp.com/cart/notify?orderId=" + order.getOrderNumber());
+//        payload.put("notifyUrl", "https://e-zezwolenia.herokuapp.com/cart/notify?orderId=" + order.getOrderNumber());
+        payload.put("continueUrl", "https://e-zezwolenia.herokuapp.com/cart/orderDetails?orderId=" + order.getOrderNumber());
         payload.put("customerIp", "127.0.0.1");
         payload.put("merchantPosId", CLIENT_ID);
         payload.put("description", "Platnosc za pozwolenie");
