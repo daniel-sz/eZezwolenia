@@ -104,7 +104,7 @@ public class CartController {
         return "redirect:";
     }
 
-    @PostMapping(value = "orderDetails")
+    @GetMapping(value = "orderDetails")
 //    @Async
     public ModelAndView orderStatus(@RequestParam String orderId){
 //        try {
