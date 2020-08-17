@@ -37,7 +37,7 @@ public class MailService {
         helper.setText(text, isHTMLObject);
 
 
-        File pdfInvoice = new File("." + File.separator + "invoices" + File.separator + "inv" + orderDetails.getOrderNumber());
+        File pdfInvoice = new File("." + File.separator + "invoices" + File.separator + "inv" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmssAAA")));
         try {
             PDDocument invoice = pdfService.createOrderConfirmation(orderDetails);
             invoice.save(pdfInvoice);
