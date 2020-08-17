@@ -12,35 +12,18 @@
 <body>
 <div class="jumbotron jumbotron-fluid">
     <h3 class="text-center" th:text="'ExtOrderId: ' + ${item.getObject().get('orders').get(0).get('extOrderId')}"></h3>
-    <h3 class="text-center" th:text="'Status: ' + ${item.getObject().get('status').get('statusCode')}"></h3>
+    <h3 id="status" class="text-center" th:text="'Status: ' + ${item.getObject().get('orders').get(0).get('status')}"></h3>
     <h3 class="text-center" th:text="'ID płatności: ' + ${item.getObject().get('properties').get(0).get('value')}"></h3>
-</div>
-<div class="container container-lg">
-<!--    <table class="table table-hover">-->
-<!--        <thead class="thead-light">-->
-<!--            <tr>-->
-<!--                <th class="text-center">Dane do zamówienia:</th>-->
-<!--            </tr>-->
-<!--        </thead>-->
-<!--        <tbody>-->
-<!--            <tr>-->
-<!--                <td th:text="'ID: ' + ${orderDetails.id}"></td>-->
-<!--            </tr>-->
-<!--            <tr>-->
-<!--                <td th:text="'Nr zamówienia: ' + ${orderDetails.order_number}"></td>-->
-<!--            </tr>-->
-<!--            <tr>-->
-<!--                <td th:text="'Data: ' + ${orderDetails.date}"></td>-->
-<!--            </tr>-->
-<!--            <tr>-->
-<!--                <td th:text="'E-mail: ' + ${orderDetails.email}"></td>-->
-<!--            </tr>-->
-<!--            <tr>-->
-<!--                <td th:text="'Wartość: ' + ${orderDetails.value} + ' zł'"></td>-->
-<!--            </tr>-->
-<!--        </tbody>-->
-<!--    </table>-->
+    <h3 class="btn btn-primary"><button onclick="window.location.reload()">Odśwież</button></h3>
 </div>
 
+<script>
+    $(document).ready(function (){
+        let statusText = $('#status').text()
+        if (statusText !== 'Status: COMPLETED'){
+            window.location.reload();
+        }
+    })
+</script>
 </body>
 </html>

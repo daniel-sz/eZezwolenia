@@ -7,6 +7,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.szewczyk.pwr.pzwmanager.model.Order;
 
+import javax.annotation.Resource;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.io.File;
@@ -17,6 +18,9 @@ import java.time.format.DateTimeFormatter;
 @Service
 public class MailService {
     private final JavaMailSender javaMailSender;
+
+    @Resource
+    PDFService pdfService;
 
     @Autowired
     public MailService(JavaMailSender javaMailSender){
@@ -32,7 +36,7 @@ public class MailService {
         helper.setSubject(subject);
         helper.setText(text, isHTMLObject);
 
-        PDFService pdfService = new PDFService();
+
         File pdfInvoice = new File("." + File.separator + "invoices" + File.separator + "inv" + orderDetails.getOrderNumber());
         try {
             PDDocument invoice = pdfService.createOrderConfirmation(orderDetails);
@@ -41,7 +45,7 @@ public class MailService {
             System.out.println("PDF saved");
         } catch (IOException e) {
             System.out.println("Error saving PDF");
-//            e.printStackTrace();
+            e.printStackTrace();
         }
 
 
