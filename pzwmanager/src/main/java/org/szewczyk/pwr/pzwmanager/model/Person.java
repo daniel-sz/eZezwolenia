@@ -33,8 +33,8 @@ public class Person {
 
     @Override
     public String toString() {
-        return "Imię i nazwisko: " + firstName + lastName +
-                ", Nr karty wędkarskiej: " + cardNumber +
-                ", Koło PZW: " + clubName;
+        return "(" + firstName + " " + lastName +
+                ", Nr karty: " + cardNumber +
+                ", Koło PZW: " + clubName + ")";
     }
 }

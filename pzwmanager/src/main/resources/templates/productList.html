@@ -11,12 +11,13 @@
     <script th:src="@{/js/tempusdominus-bootstrap-4.min.js}"></script>
     <script th:src="@{/js/myScript.js}" th:inline="javascript"></script>
     <meta charset="UTF-8">
-    <title>Lista produktów</title>
+    <title>Lista pozwoleń</title>
 </head>
 <body>
-<header class="jumbotron jumbotron-fluid text-center">
+<nav th:replace="fragments/header.html :: header"></nav>
+<div class="jumbotron jumbotron-fluid text-center">
     <h3>Wybierz pozwolenie</h3>
-</header>
+</div>
 <main>
     <div class="container container-lg">
         <div class="row">
@@ -65,21 +66,6 @@
                                         <input class="form-control" type="text" name="lastName" id="lastName" th:field="${orderItem.person.lastName}" required>
                                     </div>
                                 </div>
-<!--                                <div class="form-row">-->
-<!--                                    <div class="form-group col-md-6">-->
-<!--                                        <label for="email">E-mail</label>-->
-<!--                                        <input class="form-control" type="email" name="email" id="email" th:field="${orderItem.person.email}" required>-->
-<!--                                    </div>-->
-<!--                                    <div class="form-group col-md-6">-->
-<!--                                        <label for="emailConfirm">Potwierdź e-mail</label>-->
-<!--                                        <input class="form-control" type="email" name="emailConfirm" id="emailConfirm"-->
-<!--                                               onfocus="validateMail(document.getElementById('email'), this)"-->
-<!--                                               oninput="validateMail(document.getElementById('email'), this)">-->
-<!--                                    </div>-->
-<!--                                    <div class="col-12">-->
-<!--                                        <p class="text-center"></p>-->
-<!--                                    </div>-->
-<!--                                </div>-->
                                 <div class="form-row">
                                     <div class="form-group col-md-6">
                                         <label for="nationality">Obywatelstwo</label>
@@ -90,7 +76,7 @@
                                     </div>
                                     <div class="form-group col-md-6">
                                         <label for="cardNumber">Nr karty wędkarskiej</label>
-                                        <input class="form-control" type="text" name="cardNumber" id="cardNumber" th:field="${orderItem.person.cardNumber}">
+                                        <input class="form-control" type="text" name="cardNumber" id="cardNumber" th:field="${orderItem.person.cardNumber}" required>
                                     </div>
                                 </div>
                                 <div class="col-12 border-bottom border-primary">
@@ -149,7 +135,7 @@
                                     </div>
                                     <div class="form-group col-md-6">
                                         <label for="clubCity">Koło PZW</label>
-                                        <input class="form-control" type="text" id="clubCity" th:field="${orderItem.person.clubName}">
+                                        <input class="form-control" type="text" id="clubCity" th:field="${orderItem.person.clubName}" required>
                                     </div>
                                 </div>
                                 <div class="form-row">
@@ -207,6 +193,7 @@
 
     </div>
 </main>
+<footer th:replace="fragments/footer.html" :: footer></footer>
 
 </body>
 </html>

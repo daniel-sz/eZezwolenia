@@ -36,8 +36,12 @@ public class MailService {
         helper.setSubject(subject);
         helper.setText(text, isHTMLObject);
 
+        String filePath = new File("").getAbsolutePath();
+        System.out.println("path: " + filePath);
+        File dir = new File(filePath + File.separator + "invoices");
+        dir.mkdir();
 
-        File pdfInvoice = new File("." + File.separator + "invoices" + File.separator + "inv" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmssAAA")));
+        File pdfInvoice = new File(filePath + File.separator + "invoices" + File.separator + "inv" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmssAAA")) + ".pdf");
         try {
             PDDocument invoice = pdfService.createOrderConfirmation(orderDetails);
             invoice.save(pdfInvoice);
@@ -50,7 +54,7 @@ public class MailService {
 
 
 //        FileSystemResource file = new FileSystemResource(new File("C:" + File.separator + "testy" + File.separator + "test.csv"));
-        helper.addAttachment("Potwierdzenie " + LocalDateTime.now().format(DateTimeFormatter.BASIC_ISO_DATE), pdfInvoice);
+        helper.addAttachment("Potwierdzenie " + LocalDateTime.now().format(DateTimeFormatter.BASIC_ISO_DATE) + ".pdf", pdfInvoice);
 
         javaMailSender.send(mimeMessage);
         pdfInvoice.delete();

@@ -13,6 +13,7 @@ import org.szewczyk.pwr.pzwmanager.model.Order;
 import org.szewczyk.pwr.pzwmanager.model.OrderItem;
 import org.vandeseer.easytable.TableDrawer;
 import org.vandeseer.easytable.settings.BorderStyle;
+import org.vandeseer.easytable.settings.HorizontalAlignment;
 import org.vandeseer.easytable.structure.Row;
 import org.vandeseer.easytable.structure.Table;
 import org.vandeseer.easytable.structure.cell.TextCell;
@@ -21,6 +22,8 @@ import java.awt.*;
 import java.awt.geom.Point2D;
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Service
 public class PDFService {
@@ -55,7 +58,7 @@ public class PDFService {
         contentStream.lineTo(500, 550);
         contentStream.stroke();
         addCenteredText("Potwierdzenie płatności", font, 24, contentStream, page1, new Point2D.Float(0, 100));
-        addCenteredText("nr " + order.getOrderNumber(), font, 18, contentStream, page1, new Point2D.Float(0, 75));
+        addCenteredText("nr " + order.getOrderNumber(), font, 14, contentStream, page1, new Point2D.Float(0, 75));
         contentStream.moveTo(100, 480);
         contentStream.lineTo(500, 480);
         contentStream.stroke();
@@ -77,10 +80,17 @@ public class PDFService {
 
         for (OrderItem item: order.getOrderItems()){
             tableBuilder.addRow(Row.builder()
-                    .add(TextCell.builder().text(item.getItem().getName()).build())
-                    .add(TextCell.builder().text(item.getPrice().toString()).build())
+                    .add(TextCell.builder().text(item.toString()).build())
+                    .add(TextCell.builder().text(item.getPrice().toString() + " zł").build())
                     .build());
         }
+        tableBuilder.addRow(Row.builder()
+                .add(TextCell.builder()
+                        .text("Razem")
+                        .horizontalAlignment(HorizontalAlignment.RIGHT)
+                        .build())
+                .add(TextCell.builder().text(order.getValue() + " zł").build())
+                .build());
 
         TableDrawer tableDrawer = TableDrawer.builder()
                 .contentStream(contentStream)
@@ -96,7 +106,9 @@ public class PDFService {
         contentStream.newLineAtOffset(25, tableDrawer.getFinalY() - 25);
 //        contentStream.showText("Nr zamówienia: " + order.getOrderNumber());
 //        contentStream.newLine();
-        contentStream.showText("ID PayU: " + order.getPayuOrderId());
+        contentStream.showText("Nr płatności PayU: " + order.getPayuPaymentId());
+        contentStream.newLine();
+        contentStream.showText("Wygenerowano: " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss")));
 
         contentStream.endText();
         contentStream.close();

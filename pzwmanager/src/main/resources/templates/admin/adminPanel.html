@@ -17,11 +17,10 @@
     <title>Admin panel</title>
 </head>
 <body>
-<header>
-    <div class="jumbotron jumbotron-fluid bg-primary text-light">
-        <h3 class="text-center">Panel administratora</h3>
-    </div>
-</header>
+<nav th:replace="fragments/header.html :: header"></nav>
+<div class="jumbotron jumbotron-fluid bg-primary text-light">
+    <h3 class="text-center">Panel administratora</h3>
+</div>
 <main>
     <div class="container container-lg">
         <div class="row">
@@ -55,5 +54,6 @@
     </div>
 
 </main>
+<footer th:replace="fragments/footer.html" :: footer></footer>
 </body>
 </html>

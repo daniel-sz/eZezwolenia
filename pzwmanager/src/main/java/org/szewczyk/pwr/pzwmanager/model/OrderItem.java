@@ -6,7 +6,6 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import java.math.BigDecimal;
-import java.time.LocalDate;
 
 @Data
 @Entity
@@ -44,4 +43,13 @@ public class OrderItem {
     @PrimaryKeyJoinColumn
     private Person person;
 
+    @Override
+    public String toString() {
+        String period = "";
+        if (price.equals(item.getPrice1day())) period = "1 dzień";
+        if (price.equals(item.getPrice3days())) period = "3 dni";
+        if (price.equals(item.getPrice7days())) period = "7 dni";
+        if (price.equals(item.getPrice1year())) period = "1 rok";
+        return item.getName() + " [" + period + " od: " + beginDate + "] - " + person.toString();
+    }
 }

@@ -7,21 +7,49 @@
     <script th:src="@{/js/jquery.js}"></script>
     <script th:src="@{/js/bootstrap.min.js}"></script>
     <meta charset="UTF-8">
-    <title>Finalizacja zamówienia</title>
+    <title>Podsumowanie zamówienia</title>
 </head>
 <body>
-<div class="jumbotron jumbotron-fluid">
-    <h3 class="text-center" th:text="'ExtOrderId: ' + ${item.getObject().get('orders').get(0).get('extOrderId')}"></h3>
-    <h3 id="status" class="text-center" th:text="'Status: ' + ${item.getObject().get('orders').get(0).get('status')}"></h3>
-    <h3 class="text-center" th:text="'ID płatności: ' + ${item.getObject().get('properties').get(0).get('value')}"></h3>
-    <h3 class="btn btn-primary"><button onclick="window.location.reload()">Odśwież</button></h3>
+<nav th:replace="fragments/header.html :: header"></nav>
+<div class="jumbotron jumbotron-fluid text-center">
+    <h3>Podsumowanie zamówienia</h3>
 </div>
+<main class="container container-lg">
+    <div class="row">
+        <div class="col col-12 bg-light m-3">
+            <table class="table">
+                <tr>
+                    <td>Nr zamówienia: <span th:text="${item.getObject().get('orders').get(0).get('extOrderId')}"></span></td>
+                </tr>
+                <tr>
+                    <td>Status płatności: <span id="status" th:if="${item.getObject().get('orders').get(0).get('status')} == 'COMPLETED'" class="text-success">ZAKOŃCZONA</span><span id="status" th:if="${item.getObject().get('orders').get(0).get('status')} != 'COMPLETED'" class="text-warning">OCZEKUJE</span></td>
+                </tr>
+                <tr>
+                    <td>Nr płatności PayU: <span th:text="${item.getObject().get('properties').get(0).get('value')}"></span></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col col-12">
+            <h5 class="text-center">Zawartość zamówienia</h5>
+            <table class="table table-striped">
+                <tr th:each="orderItem : ${order.getOrderItems()}">
+                    <td th:text="${orderItem.toString()}"></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</main>
+<footer th:replace="fragments/footer.html" :: footer></footer>
 
 <script>
     $(document).ready(function (){
         let statusText = $('#status').text()
-        if (statusText !== 'Status: COMPLETED'){
-            window.location.reload();
+        if (statusText !== 'ZAKOŃCZONA'){
+            setTimeout(function (){
+                window.location.reload()
+            }, 4000);
         }
     })
 </script>
