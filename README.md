@@ -7,8 +7,8 @@ Aplikacja oparta o wzorzec projektowy MVC.
 ### Zaplanowane funkcje:
 - [x] Wybór żądanego typu pozwolenia oraz podanie danych osoby, której ma ono dotyczyć
 - [x] Płatność przy pomocy PayU
-- [ ] Wygenerowanie pliku PDF z potwierdzeniem
-- [ ] Wysłanie potwierdzenia na podany przy zamówieniu adres e-mail
+- [x] Wygenerowanie pliku PDF z potwierdzeniem
+- [x] Wysłanie potwierdzenia na podany przy zamówieniu adres e-mail
 - [x] Panel administratora do przeglądania i zarządzania bazą pozwoleń oraz zamówień
 
 ### Wykorzystane technologie:
@@ -23,3 +23,4 @@ Aplikacja oparta o wzorzec projektowy MVC.
 - Unirest
 - Apache PDFBox
 - Spring Mail
+- Jasypt
