@@ -36,7 +36,7 @@ public class PDFService {
         PDImageXObject logo1 = PDImageXObject.createFromFile(srcPath + "img/1.jpg", document);
         PDType0Font font = PDType0Font.load(document, new File(srcPath + "fonts/SourceSans/SourceSansPro-Light.ttf"));
 
-        contentStream.drawImage(logo1, 450, 645, 75, 75);
+        contentStream.drawImage(logo1, 480, 635, 75, 75);
         contentStream.beginText();
 
         contentStream.setFont(font, 12);
@@ -57,7 +57,7 @@ public class PDFService {
         contentStream.moveTo(100, 550);
         contentStream.lineTo(500, 550);
         contentStream.stroke();
-        addCenteredText("Potwierdzenie płatności", font, 24, contentStream, page1, new Point2D.Float(0, 100));
+        addCenteredText("Potwierdzenie zamówienia", font, 24, contentStream, page1, new Point2D.Float(0, 100));
         addCenteredText("nr " + order.getOrderNumber(), font, 14, contentStream, page1, new Point2D.Float(0, 75));
         contentStream.moveTo(100, 480);
         contentStream.lineTo(500, 480);

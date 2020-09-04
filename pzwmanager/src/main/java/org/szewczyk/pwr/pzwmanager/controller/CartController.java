@@ -59,6 +59,7 @@ public class CartController {
             "HTTP_VIA",
             "REMOTE_ADDR"
     };
+    private String userIp = "127.0.0.1";
 
 
     @GetMapping(value = "")
@@ -79,7 +80,7 @@ public class CartController {
     }
 
     private String getUsersIp(RequestAttributes requestAttributes){
-        if (requestAttributes == null) return "0.0.0.0";
+        if (requestAttributes == null) return "127.0.0.1";
         HttpServletRequest request = ((ServletRequestAttributes) requestAttributes).getRequest();
         for (String header : IP_HEADER_NAMES){
             String ipList = request.getHeader(header);
@@ -87,7 +88,7 @@ public class CartController {
                 return ipList.split(",")[0];
             }
         }
-        return request.getRemoteAddr();
+        return request.getRemoteAddr().equals("0:0:0:0:0:0:0:1") ? "127.0.0.1" : request.getRemoteAddr();
     }
     private String getToken(){
         HttpResponse<JsonNode> jsonResponse = Unirest.post(AUTH_URL)
@@ -102,7 +103,7 @@ public class CartController {
         JSONObject payload = new JSONObject();
 //        payload.put("notifyUrl", "https://e-zezwolenia.herokuapp.com/cart/notify?orderId=" + order.getOrderNumber());
         payload.put("continueUrl", HOME_URL + "/cart/orderDetails?orderId=" + order.getOrderNumber());
-        payload.put("customerIp", "127.0.0.1");
+        payload.put("customerIp", userIp);
         payload.put("merchantPosId", CLIENT_ID);
         payload.put("description", "Platnosc za pozwolenie");
         payload.put("currencyCode", "PLN");
@@ -144,7 +145,7 @@ public class CartController {
     @RequestMapping(value = "finalizeOrder")
     public String finalizeOrder(Order order){
 //        ------------ GET USER'S IP
-        System.out.println("IP uzytkownika: " + getUsersIp(RequestContextHolder.currentRequestAttributes()));
+        userIp = getUsersIp(RequestContextHolder.currentRequestAttributes());
 
 //        ------------ FIND USER'S CART
         String currentSessionId = RequestContextHolder.currentRequestAttributes().getSessionId();
@@ -202,13 +203,13 @@ public class CartController {
 
 //                EMAIL SENDING
                     String mailAddress = order.getEmail();
-                    String subject = "Potwierdzenie zamówienia " + order.getOrderNumber() + " i płatności nr " + payuPaymentId;
+                    String subject = "Potwierdzenie zamówienia";
                     String mailText =
                             """
                                     Witamy w serwisie e-Zezwolenia,
 
                                     W załączniku będzie znajdował się plik z potwierdzeniem zamówienia.
-                                    Zapraszamy z tym plikiem (w wersji elektronicznej lub wydrukowanej) do zarządu PZW po odbiór wymaganych naklejek.
+                                    Zapraszamy z tym potwierdzeniem (w wersji elektronicznej lub wydrukowanej) do zarządu PZW po odbiór wymaganych naklejek.
                                     Dziękujemy za skorzystanie z naszych usług.
 
                                     Polski Związek Wędkarski

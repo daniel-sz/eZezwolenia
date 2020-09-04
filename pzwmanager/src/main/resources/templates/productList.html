@@ -5,6 +5,7 @@
     <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap.min.css}"/>
     <link rel="stylesheet" type="text/css" th:href="@{/css/all.css}"/>
     <link rel="stylesheet" type="text/css" th:href="@{/css/tempusdominus-bootstrap-4.min.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/productList.css}"/>
     <script th:src="@{/js/jquery.js}"></script>
     <script th:src="@{/js/bootstrap.min.js}"></script>
     <script th:src="@{/js/moment-with-locales.min.js}"></script>
@@ -25,17 +26,19 @@
                 <h2 class="text-lg-center">Brak zawartości do wyświetlenia!</h2>
             </div>
             <div class="col-lg-6" th:each="item : ${items}">
-                <div class="card text-center" style="margin-top: 20px; margin-bottom: 20px;">
-                    <div class="card-body">
-                        <h5 th:text="${item.name}"></h5>
-                        <p th:text="${item.description}"></p>
-                    </div>
-                    <div class="card-footer">
-                        <p th:text="'Od ' + ${item.price1day} + ' zł'"></p>
-                        <a th:href="@{getOne(id=${item.id})}" id="openModalBtn"
-                           class="btn btn-lg btn-primary" style="color: white;" th:attr="data-target='#myOrderModal'">
-                            <i class="fas fa-cart-plus"></i> Dodaj
-                        </a>
+                <div class="card text-center item-card">
+                    <div class="item-card-content">
+                        <div class="card-body">
+                            <h5 th:text="${item.name}"></h5>
+                            <p th:text="${item.description}"></p>
+                        </div>
+                        <div class="card-footer">
+                            <p th:text="'Od ' + ${item.price1day} + ' zł'"></p>
+                            <a th:href="@{getOne(id=${item.id})}" id="openModalBtn"
+                               class="btn btn-lg btn-primary" style="color: white;" th:attr="data-target='#myOrderModal'">
+                                <i class="fas fa-cart-plus"></i> Dodaj
+                            </a>
+                        </div>
                     </div>
                 </div>
 
@@ -157,7 +160,7 @@
                                     <div class="form-group col-12">
                                         <label>Początek obowiązywania pozwolenia</label><br>
                                         <div class="input-group date" id="datepicker" data-target-input="nearest">
-                                            <input class="form-control datetimepicker-input" data-target="#datepicker" type="text" th:field="${orderItem.beginDate}">
+                                            <input class="form-control datetimepicker-input" data-target="#datepicker" type="text" th:field="${orderItem.beginDate}" required>
                                             <div class="input-group-append" data-target="#datepicker" data-toggle="datetimepicker">
                                                 <div class="input-group-text">
                                                     <i class="fas fa-calendar-day"></i>
@@ -185,7 +188,7 @@
                         </div>
                     </div>
                     <div class="modal-footer" id="priceTextBox">
-                        <p>Cena: </p><p id="priceTag">0</p>
+                        <p>Cena: </p><p id="priceTag">0</p><p>zł</p>
                     </div>
                 </div>
             </div>

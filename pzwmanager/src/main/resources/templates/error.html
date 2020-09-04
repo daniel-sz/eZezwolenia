@@ -2,41 +2,61 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Błąd</title>
+    <meta http-equiv="x-ua-compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Nieoczekiwany błąd</title>
+
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700,900" rel="stylesheet">
+    <link type="text/css" rel="stylesheet" th:href="@{/css/errorPage.css}">
+
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 </head>
 <body>
-<h2>Coś... coś się popsuło, i nie będzie mnie słychać</h2>
-<table>
-    <tr>
-        <td>Date</td>
-        <td th:text="${timestamp}"/>
-    </tr>
-    <tr>
-        <td>Path</td>
-        <td th:text="${path}"/>
-    </tr>
-    <tr>
-        <td>Error</td>
-        <td th:text="${error}"/>
-    </tr>
-    <tr>
-        <td>Status</td>
-        <td th:text="${status}"/>
-    </tr>
-    <tr>
-        <td>Message</td>
-        <td th:text="${message}"/>
-    </tr>
-    <tr>
-        <td>Exception</td>
-        <td th:text="${exception}"/>
-    </tr>
-    <tr>
-        <td>Trace</td>
-        <td>
-            <pre th:text="${trace}"/>
-        </td>
-    </tr>
-</table>
+    <div id="notfound">
+        <div class="notfound">
+            <div class="notfound-404">
+                <h1>Błąd!</h1>
+            </div>
+            <h2 th:text="${status}">Kod błędu</h2>
+            <p th:text="${error}">Szczegóły</p>
+            <a href="/">Wróć na stronę główną</a>
+        </div>
+    </div>
+
+<!--<h2>Coś... coś się popsuło, i nie będzie mnie słychać</h2>-->
+<!--<table>-->
+<!--    <tr>-->
+<!--        <td>Date</td>-->
+<!--        <td th:text="${timestamp}"/>-->
+<!--    </tr>-->
+<!--    <tr>-->
+<!--        <td>Path</td>-->
+<!--        <td th:text="${path}"/>-->
+<!--    </tr>-->
+<!--    <tr>-->
+<!--        <td>Error</td>-->
+<!--        <td th:text="${error}"/>-->
+<!--    </tr>-->
+<!--    <tr>-->
+<!--        <td>Status</td>-->
+<!--        <td th:text="${status}"/>-->
+<!--    </tr>-->
+<!--    <tr>-->
+<!--        <td>Message</td>-->
+<!--        <td th:text="${message}"/>-->
+<!--    </tr>-->
+<!--    <tr>-->
+<!--        <td>Exception</td>-->
+<!--        <td th:text="${exception}"/>-->
+<!--    </tr>-->
+<!--    <tr>-->
+<!--        <td>Trace</td>-->
+<!--        <td>-->
+<!--            <pre th:text="${trace}"/>-->
+<!--        </td>-->
+<!--    </tr>-->
+<!--</table>-->
 </body>
 </html>

@@ -31,13 +31,13 @@ public class MailService {
     public void sendMail(String to, String subject, String text, boolean isHTMLObject, Order orderDetails) throws MessagingException {
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
-        helper.setFrom("pzwkudowa@wp.pl");
+        helper.setFrom("e-Zezwolenia <pzwkudowa@wp.pl>");
         helper.setTo(to);
         helper.setSubject(subject);
         helper.setText(text, isHTMLObject);
 
         String filePath = new File("").getAbsolutePath();
-        System.out.println("path: " + filePath);
+//        System.out.println("path: " + filePath);
         File dir = new File(filePath + File.separator + "invoices");
         dir.mkdir();
 
@@ -46,7 +46,7 @@ public class MailService {
             PDDocument invoice = pdfService.createOrderConfirmation(orderDetails);
             invoice.save(pdfInvoice);
             invoice.close();
-            System.out.println("PDF saved");
+//            System.out.println("PDF saved");
         } catch (IOException e) {
             System.out.println("Error saving PDF");
             e.printStackTrace();

@@ -1,0 +1,41 @@
+:root{
+    --gradient-color1: #007bff;
+    --gradient-color2: #003a7a;
+}
+
+.item-card {
+    margin: 20px 50px;
+}
+
+.item-card .item-card-content {
+    filter: grayscale(100%);
+    transition: 1s;
+}
+
+.item-card::before,
+.item-card::after {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, var(--gradient-color1), var(--gradient-color2));
+    filter: blur(30px);
+    opacity: 0;
+    /*z-index: -1;*/
+
+    transition: 1s;
+}
+
+.item-card::after {
+    filter: blur(50px);
+}
+
+.item-card:hover .item-card-content {
+    filter: grayscale(0);
+}
+
+.item-card:hover::before,
+.item-card:hover::after {
+    opacity: 1;
+}
